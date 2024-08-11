@@ -9,7 +9,7 @@ jobs:
 
   evaluate_ssdf:  
     name: Evaluate SSDF
-    uses: scribe-public/reusable-workflows/.github/workflows/ssdf.yml@main
+    uses: scribe-public/reusable-workflows/.github/workflows/ssdf.yaml@main
     with:
         # Ensure that the following secrets are set in the repository:
         # scribe_token: ${{ secrets.SCRIBE_TOKEN }}
