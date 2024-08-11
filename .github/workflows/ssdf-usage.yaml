@@ -1,0 +1,22 @@
+name: Demo usage of SSDF Policy
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+# Typically here will come the jobs that build a docker image and push it to DockerHub
+
+  evaluate_ssdf:  
+    name: Evaluate SSDF
+    uses: scribe-public/reusable-workflows/.github/workflows/ssdf.yml@main
+    with:
+        # Ensure that the following secrets are set in the repository:
+        # scribe_token: ${{ secrets.SCRIBE_TOKEN }}
+        # gh_token: ${{ secrets.GH_TOKEN }}
+        # dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+        # dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        scribe_product_name: "Scribot"
+        scribe_product_version: "v0.0.1-discovery-demo"
+        sbom_of_image: "scribesecurity/heyman:latest"
+    secrets: inherit
