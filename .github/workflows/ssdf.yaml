@@ -61,6 +61,8 @@ jobs:
         run: |
           echo ${{ github.repository}}
           echo ${{ github.repository_owner}}
+          echo $GITHUB_TOKEN
+          echo ${{ secrets.GH_TOKEN }}
 
       - name: Discover Github
         uses: scribe-security/action-platforms@dev
