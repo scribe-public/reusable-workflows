@@ -59,10 +59,12 @@ jobs:
 
       - name: Test variables
         run: |
-          echo ${{ github.repository}}
-          echo ${{ github.repository_owner}}
-          echo ${{ env.GITHUB_TOKEN}}
-          echo ${{ secrets.GH_TOKEN }}
+            if [ -z "${{ secrets.GH_TOKEN }}" ]; then
+            echo "GITHUB_TOKEN is empty or not set"
+            exit 1
+            else
+            echo "GITHUB_TOKEN is set"
+            fi
 
       - name: Discover Github
         uses: scribe-security/action-platforms@dev
