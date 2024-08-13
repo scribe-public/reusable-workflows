@@ -3,22 +3,6 @@ name: SSDF Evaluation
 on:
   workflow_call:
     inputs:
-      github_token:
-        description: "GitHub Token"
-        required: true
-        type: string
-      dockerhub_username:
-        description: "DockerHub Username"
-        required: true
-        type: string
-      dockerhub_password:
-        description: "DockerHub Password"
-        required: true
-        type: string 
-      scribe_token:
-        description: "Scribe Token"
-        required: true
-        type: string  
       scribe_product_name:
         description: "Scribe Product Name"
         required: true
@@ -46,7 +30,19 @@ on:
         required: false
         default: ""
         type: string
-
+    secrets:
+      GH_TOKEN:
+        description: "GitHub token"
+        required: true
+      DOCKERHUB_USERNAME:
+        description: "DockerHub username"
+        required: true
+      DOCKERHUB_PASSWORD:
+        description: "DockerHub password"
+        required: true
+      SCRIBE_TOKEN:
+        description: "Scribe token"
+        required: true
 env:
     PLATFORMS_VERSION: "dev-latest"
     PLATFORMS_DB_PATH: github.platforms.db
@@ -64,10 +60,10 @@ jobs:
   ssdf_evaluation:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ inputs.github_token }}
-      SCRIBE_TOKEN: ${{ inputs.scribe_token }}
-      DOCKERHUB_USERNAME: ${{ inputs.dockerhub_username }}
-      DOCKERHUB_PASSWORD: ${{ inputs.dockerhub_password }}
+      GITHUB_TOKEN: ${{ secrets.github_token }}
+      SCRIBE_TOKEN: ${{ secrets.scribe_token }}
+      DOCKERHUB_USERNAME: ${{ secrets.dockerhub_username }}
+      DOCKERHUB_PASSWORD: ${{ secrets.dockerhub_password }}
 
     steps:
       - name: Checkout code
