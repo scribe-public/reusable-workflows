@@ -60,10 +60,10 @@ jobs:
   ssdf_evaluation:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.github_token }}
-      SCRIBE_TOKEN: ${{ secrets.scribe_token }}
-      DOCKERHUB_USERNAME: ${{ secrets.dockerhub_username }}
-      DOCKERHUB_PASSWORD: ${{ secrets.dockerhub_password }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     steps:
       - name: Checkout code
