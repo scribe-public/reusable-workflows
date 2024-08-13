@@ -20,6 +20,16 @@ on:
         required: false
         default: "sh-5883-ssdf"
         type: string
+      discover_args:
+        description: "Discovery arguments"
+        required: false
+        default: "--commit.skip --workflow.skip"
+        type: string
+      evidence_args:
+        description: "Evidence arguments"
+        required: false
+        default: ""
+        type: string
 
 env:
     PLATFORMS_VERSION: "dev-latest"
@@ -60,8 +70,8 @@ jobs:
           args: >-
             --scope.organization *${{ github.repository_owner}}
             --scope.repository *${{ github.repository}}
-            --commit.skip
-            --workflow.skip
+            ${{ inputs.discover_args }}
+            
 
       - name: Evidence Github
         uses: scribe-security/action-platforms@dev
@@ -71,6 +81,7 @@ jobs:
           args: >-
             --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
             --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            ${{ inputs.evidence_args }}
 
       - name: Verify Github
         uses: scribe-security/action-platforms@dev
