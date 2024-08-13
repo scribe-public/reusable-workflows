@@ -3,6 +3,22 @@ name: SSDF Evaluation
 on:
   workflow_call:
     inputs:
+      github_token:
+        description: "GitHub Token"
+        required: true
+        type: string
+      dockerhub_username:
+        description: "DockerHub Username"
+        required: true
+        type: string
+      dockerhub_password:
+        description: "DockerHub Password"
+        required: true
+        type: string 
+      scribe_token:
+        description: "Scribe Token"
+        required: true
+        type: string  
       scribe_product_name:
         description: "Scribe Product Name"
         required: true
@@ -11,7 +27,7 @@ on:
         description: "Scribe Product Version"
         required: true
         type: string
-      sbom_of_image:
+      target:
         description: "Docker image for SBOM verification"
         required: true
         type: string
@@ -48,10 +64,10 @@ jobs:
   ssdf_evaluation:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      GITHUB_TOKEN: ${{ inputs.github_token }}
+      SCRIBE_TOKEN: ${{ inputs.scribe_token }}
+      DOCKERHUB_USERNAME: ${{ inputs.dockerhub_username }}
+      DOCKERHUB_PASSWORD: ${{ inputs.dockerhub_password }}
 
     steps:
       - name: Checkout code
@@ -110,7 +126,7 @@ jobs:
       - name: Generate SBOM for docker image
         uses: scribe-security/action-bom@master
         with:
-          target: ${{ inputs.sbom_of_image }}
+          target: ${{ inputs.target }}
           scribe-enable: true
           product-key:  ${{ inputs.scribe_product_name }}
           product-version: ${{ inputs.scribe_product_version }}
@@ -119,7 +135,7 @@ jobs:
       - name: Verify SBOM
         uses: scribe-security/action-verify@master
         with:
-          target: ${{ inputs.sbom_of_image }}
+          target: ${{ inputs.target }}
           scribe-enable: true
           product-key:  ${{ inputs.scribe_product_name }}
           product-version: ${{ inputs.scribe_product_version }}
