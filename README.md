@@ -12,14 +12,26 @@ The workflow is designed for compliance evaluation for a Docker image built by a
 1. At the end of your Docker build workflow, add the following step:
 
 ```yaml
-    evaluate_ssdf:  
-        name: Evaluate SSDF
-        uses: scribe-public/reusable-workflows/.github/workflows/ssdf.yaml@main
-        with:
-            scribe_product_name: < Product name on ScribeHub>
-            scribe_product_version: <Product version on ScribeHub>
-            sbom_of_image: < name of the built image, for example scribesecurity/my-mage:latest>
-        secrets: inherit
+on:
+  workflow_dispatch:
+
+jobs:
+
+  # Typically here will come the jobs that build a docker image and push it to DockerHub
+
+  evaluate_ssdf:  
+    name: Evaluate SSDF
+    uses: scribe-public/reusable-workflows/.github/workflows/ssdf.yaml@main
+    with:
+        scribe_product_name: "Scribot"
+        scribe_product_version: "v0.0.1-discovery-demo"
+        target: "scribesecurity/heyman:latest"
+    secrets: 
+        SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
 ```
 Note: 
 * The `scribe_product_name` and `scribe_product_version` are a user defined name and version of the product on ScribeHub. You do not need to create the product on ScribeHub, the workflow will create it for you.
