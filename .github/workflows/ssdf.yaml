@@ -55,11 +55,11 @@ env:
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
     LOG_LEVEL: "INFO"
-    VALINT_LOG_LEVEL: "info"
+    VALINT_LOG_LEVEL: "debug"
     VALINT_DISABLE_EVIDENCE_CACHE: false
     VALINT_SCRIBE_ENABLE: true 
     DOCKER_DRIVER: overlay2
-    DEBUG: false
+    DEBUG: true
 
 jobs:
   ssdf_evaluation:
