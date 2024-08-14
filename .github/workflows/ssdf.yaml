@@ -33,7 +33,7 @@ on:
       format:
         description: "Evidence format"
         required: false
-        default: "attest-cyclonedx-json"
+        default: "cyclonedx-json"
         type: string
     secrets:
       GH_TOKEN:
