@@ -16,7 +16,7 @@ jobs:
       run: kubectl get pods -A
     - name: Get IP
       run: | 
-        K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}' | sed 's/https:\/\/\([0-9\.]*\).*/\1/')
+        export K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}' | sed 's/https:\/\/\([0-9\.]*\).*/\1/')
         echo $K8S_URL
     - name: Create and get token
       run: |
