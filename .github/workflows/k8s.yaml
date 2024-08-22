@@ -14,18 +14,41 @@ jobs:
       uses: medyagh/setup-minikube@latest
     - name: Try the cluster!
       run: kubectl get pods -A
-    - name: Build image
+    - name: Get IP
+      run: | 
+        K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}' | sed 's/https:\/\/\([0-9\.]*\).*/\1/')
+        echo $K8S_URL
+    - name: Create and get token
       run: |
-        minikube image build -t local/devex:v1 .        
-    - name: Deploy to minikube
-      run: |
-        kubectl apply -f deploy/k8s.yaml
-        kubectl wait --for=condition=ready pod -l app=local-devex
-    - name: Test service URLs
-      run: |
-        minikube service list
-        minikube service local-devex-svc --url
-        echo "------------------opening the service------------------"
-        curl $(minikube service local-devex-svc --url)        
+        kubectl create secret generic my-secret --from-literal=username=myuser --from-literal=password=mypassword
+        kubectl create serviceaccount my-serviceaccount
+        kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=cluster-admin --serviceaccount=default:my-serviceaccount
+        export K8S_TOKEN=$(kubectl get secret $(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode)
+
+    - name: Discover Github
+      uses: scribe-security/action-platforms@dev
+      with:
+        command: discover
+        platform: k8s
+        # args: >-
+        #     --scope.organization *${{ github.repository_owner}}
+        #     --scope.repository *${{ github.repository}}
+        #     ${{ inputs.discover_args }}
+            
+
+
+    # - name: Build image
+    #   run: |
+    #     minikube image build -t local/devex:v1 .        
+    # - name: Deploy to minikube
+    #   run: |
+    #     kubectl apply -f deploy/k8s.yaml
+    #     kubectl wait --for=condition=ready pod -l app=local-devex
+    # - name: Test service URLs
+    #   run: |
+    #     minikube service list
+    #     minikube service local-devex-svc --url
+    #     echo "------------------opening the service------------------"
+    #     curl $(minikube service local-devex-svc --url)        
 
 
