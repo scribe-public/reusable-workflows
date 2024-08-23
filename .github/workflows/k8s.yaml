@@ -29,8 +29,11 @@ jobs:
         kubectl get serviceaccount my-serviceaccount
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=cluster-admin --serviceaccount=default:my-serviceaccount
         kubectl get clusterrolebinding my-sa-admin-binding -o yaml
+        echo "before"
+        kubectl get secret my-secret -o=jsonpath='{data}'
         kubectl get secret my-secret -o=jsonpath='{.data.token}'
-        K8S_TOKEN=$(kubectl get secret my-secret -o=jsonpath='{.data.token}' | base64 -D)
+        echo "after"
+        K8S_TOKEN=$(kubectl get secret my-secret -o=jsonpath='{.data.token}' | base64 --decode)
         echo "$K8S_TOKEN"
         echo "K8S_TOKEN=$K8S_TOKEN" >> $GITHUB_ENV
            
