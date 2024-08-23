@@ -26,9 +26,34 @@ jobs:
         kubectl create secret generic my-secret --from-literal=username=myuser --from-literal=password=mypassword
         kubectl create serviceaccount my-serviceaccount
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=cluster-admin --serviceaccount=default:my-serviceaccount
-        echo "$(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}')"
-        echo "$(kubectl get secret $(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode)"
-        echo "K8S_TOKEN=$(kubectl get secret $(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode)" >> $GITHUB_ENV
+        
+        # Wait for the secret to be available
+        echo "Waiting for the secret to be created..."
+        for i in {1..10}; do
+            SECRET_NAME=$(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}')
+            if [ -n "$SECRET_NAME" ]; then
+            break
+            fi
+            sleep 2
+        done
+        
+        if [ -z "$SECRET_NAME" ]; then
+            echo "Secret was not created in time."
+            exit 1
+        fi
+        
+        echo "Secret found: $SECRET_NAME"
+        
+        # Get the token from the secret
+        K8S_TOKEN=$(kubectl get secret $SECRET_NAME -o jsonpath='{.data.token}' | base64 --decode)
+        
+        if [ -z "$K8S_TOKEN" ]; then
+            echo "Failed to retrieve the token."
+            exit 1
+        fi
+        
+        echo "K8S_TOKEN=$K8S_TOKEN" >> $GITHUB_ENV    
+    
     - name: Print token
       run: echo "${{ env.K8S_TOKEN }}"
     
