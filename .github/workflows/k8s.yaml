@@ -38,6 +38,8 @@ jobs:
     - name: Print token
       run: | 
         echo "${{ env.K8S_TOKEN }}"
+        echo "K8S_URL='${{ env.K8S_URL}}'"
+        echo "K8S_TOKEN='${{ env.K8S_TOKEN}}:0:5...'"
         curl -k -H "Authorization: Bearer ${{env.K8S_TOKEN}}" "${{ env.K8S_URL}}/livez?verbose"
 
     
