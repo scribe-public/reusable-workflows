@@ -41,6 +41,7 @@ jobs:
     - name: Discover K8S
       uses: scribe-security/action-platforms@dev
       with:
+        log-level: DEBUG
         command: discover
         platform: k8s
         args: >-
