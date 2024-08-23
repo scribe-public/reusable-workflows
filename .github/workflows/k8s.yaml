@@ -33,19 +33,17 @@ jobs:
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=my-role --serviceaccount=default:my-serviceaccount
         kubectl get clusterrolebinding my-sa-admin-binding -o yaml
         K8S_TOKEN=$(kubectl create token my-serviceaccount)
-        A=$(kubectl create token my-serviceaccount)
-        echo "$A"
-        echo "$K8S_TOKEN"
+        echo "K8S_TOKEN is of length: ${#K8S_TOKEN}"
+        echo "First few characters of K8S_TOKEN: ${K8S_TOKEN:0:5}..."
         echo "K8S_TOKEN=$K8S_TOKEN" >> $GITHUB_ENV
            
     - name: Print token
       run: | 
         set -x
-        echo "${{ env.K8S_TOKEN }}" > tmp.txt
-        cat tmp.txt
+        echo "First few characters of K8S_TOKEN: ${K8S_TOKEN:0:5}..."
         echo "K8S_URL='${{ env.K8S_URL}}'"
-        echo "K8S_TOKEN='${{ env.K8S_TOKEN}}:0:5...'"
-        curl -k -H "'Authorization: Bearer ${{env.K8S_TOKEN}}'" "${{ env.K8S_URL}}/livez"
+        echo "K8S_TOKEN=${{ env.K8S_TOKEN}}:0:5..."
+        curl -k -H "Authorization: Bearer ${{env.K8S_TOKEN}}" "${{ env.K8S_URL}}/livez"
 
     
     - name: Discover K8S
