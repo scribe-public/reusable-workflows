@@ -23,17 +23,14 @@ jobs:
 
     - name: Create and get token
       run: |
-        kubectl create secret generic my-secret --from-literal=username=myuser --from-literal=password=mypassword
-        kubectl get secret my-secret -o yaml
         kubectl create serviceaccount my-serviceaccount -o yaml
-        kubectl get serviceaccount my-serviceaccount
-        kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=cluster-admin --serviceaccount=default:my-serviceaccount
+        kubectl create clusterrole my-role \
+        --verb=get --verb=watch --verb=list \
+        --resource=secrets,pods,namespaces,deployments \
+        --api-group=,apps
+        kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=my-role --serviceaccount=default:my-serviceaccount
         kubectl get clusterrolebinding my-sa-admin-binding -o yaml
-        echo "before"
-        kubectl get secret my-secret -o=jsonpath='{data}'
-        kubectl get secret my-secret -o=jsonpath='{.data.token}'
-        echo "after"
-        K8S_TOKEN=$(kubectl get secret my-secret -o=jsonpath='{.data.token}' | base64 --decode)
+        K8S_TOKEN=$(kubectl create token my-serviceaccount)
         echo "$K8S_TOKEN"
         echo "K8S_TOKEN=$K8S_TOKEN" >> $GITHUB_ENV
            
