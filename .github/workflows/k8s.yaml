@@ -42,14 +42,13 @@ jobs:
       uses: scribe-security/action-platforms@dev
       with:
         log-level: DEBUG
+        print-config: true
         command: discover
         platform: k8s
         args: >-
               --url ${{ env.K8S_URL }}
               --token ${{ env.K8S_TOKEN }}
-        #     --scope.organization *${{ github.repository_owner}}
-        #     --scope.repository *${{ github.repository}}
-        #     ${{ inputs.discover_args }}
+
             
 
 
