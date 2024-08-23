@@ -16,14 +16,14 @@ jobs:
       run: kubectl get pods -A
     - name: Get IP
       run: | 
-        export K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}')
-        echo $K8S_URL
+        echo "K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}')"" >> $GITHUB_ENV
+        echo ${{ env.K8S_URL }}
     - name: Create and get token
       run: |
         kubectl create secret generic my-secret --from-literal=username=myuser --from-literal=password=mypassword
         kubectl create serviceaccount my-serviceaccount
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=cluster-admin --serviceaccount=default:my-serviceaccount
-        export K8S_TOKEN=$(kubectl get secret $(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode)
+        echo "K8S_TOKEN=$(kubectl get secret $(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode)" >> $GITHUB_ENV"
 
     - name: Discover Github
       uses: scribe-security/action-platforms@dev
@@ -31,8 +31,8 @@ jobs:
         command: discover
         platform: k8s
         args: >-
-              --url $K8S_URL
-              --token $K8S_TOKEN
+              --url ${{ env.K8S_URL }}
+              --token ${{ env.K8S_TOKEN }}
         #     --scope.organization *${{ github.repository_owner}}
         #     --scope.repository *${{ github.repository}}
         #     ${{ inputs.discover_args }}
