@@ -29,7 +29,6 @@ jobs:
         kubectl create clusterrole my-role \
         --verb=get --verb=watch --verb=list \
         --resource=secrets,pods,namespaces,deployments,rs.apps
-        --api-group=,apps
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=my-role --serviceaccount=default:my-serviceaccount
         kubectl get clusterrolebinding my-sa-admin-binding -o yaml
         K8S_TOKEN=$(kubectl create token my-serviceaccount)
