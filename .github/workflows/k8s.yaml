@@ -19,7 +19,7 @@ jobs:
       run: | 
         echo "K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}')" >> $GITHUB_ENV
     - name: Print IP
-      run:
+      run: |
         echo ${{ env.K8S_URL }}
 
     - name: Create and get token
@@ -29,7 +29,7 @@ jobs:
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=cluster-admin --serviceaccount=default:my-serviceaccount
         echo "K8S_TOKEN=$(kubectl get secret $(kubectl get serviceaccount my-serviceaccount -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode)" >> $GITHUB_ENV
     - name: Print token
-      run:
+      run: |
         echo ${{ env.K8S_TOKEN }}
 
     - name: Discover Github
