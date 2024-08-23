@@ -17,7 +17,7 @@ jobs:
       run: kubectl get pods -A
     - name: Get IP
       run: | 
-        echo "K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}')"" >> $GITHUB_ENV
+        echo "K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}')" >> $GITHUB_ENV
         echo ${{ env.K8S_URL }}
     - name: Create and get token
       run: |
