@@ -24,7 +24,9 @@ jobs:
     - name: Create and get token
       run: |
         kubectl create secret generic my-secret --from-literal=username=myuser --from-literal=password=mypassword
-        kubectl create serviceaccount my-serviceaccount
+        kubectl get secret my-secret -o yaml
+        kubectl create serviceaccount my-serviceaccount -o yaml
+        kubectl get serviceaccount my-serviceaccount
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=cluster-admin --serviceaccount=default:my-serviceaccount
         
         # Wait for the secret to be associated with the service account
