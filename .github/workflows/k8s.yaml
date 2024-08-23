@@ -25,6 +25,7 @@ jobs:
 
     - name: Create and get token
       run: |
+        set -x
         kubectl create serviceaccount my-serviceaccount -o yaml
         kubectl create clusterrole my-role \
         --verb=get --verb=watch --verb=list \
@@ -39,6 +40,7 @@ jobs:
            
     - name: Print token
       run: | 
+        set -x
         echo "${{ env.K8S_TOKEN }}" > tmp.txt
         cat tmp.txt
         echo "K8S_URL='${{ env.K8S_URL}}'"
