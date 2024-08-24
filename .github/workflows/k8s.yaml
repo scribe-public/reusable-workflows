@@ -8,6 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     name: build example and deploy to minikube
     steps:
+
+    - name: Pull platforms image
+      run: docker pull scribesecurity/platforms:dev-latest
+      
     - uses: actions/checkout@v4
       with:
         repository: medyagh/local-dev-example-with-minikube
@@ -48,7 +52,7 @@ jobs:
 
     - name: Run Image
       run: | 
-        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN docker://scribesecurity/platforms:dev-latest discover k8s
+        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:dev-latest discover k8s
            
 
     - name: Discover K8S
