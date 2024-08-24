@@ -43,8 +43,8 @@ jobs:
         echo "First few characters of K8S_TOKEN: ${K8S_TOKEN:0:5}..."
         echo "K8S_URL='${K8S_URL}'" | cat -v
         echo "K8S_TOKEN=${K8S_TOKEN}:0:5..."
-        curl -v -k -H "Authorization: Bearer ${K8S_TOKEN}" "${K8S_URL}/livez"
-        echo "curl -k -H \"Authorization: Bearer $K8S_TOKEN\" \"$K8S_URL/livez\""
+        curl -v -k -H "Authorization: Bearer ${K8S_TOKEN}" "${K8S_URL}/livez?verbose"
+#        echo "curl -k -H \"Authorization: Bearer $K8S_TOKEN\" \"$K8S_URL/livez\""
 
     
     - name: Discover K8S
@@ -55,7 +55,7 @@ jobs:
         command: discover
         platform: k8s
         args: >-
-              --url ${{ env.K8S_URL }}
+              --url https://localhost:8443
               --token ${{ env.K8S_TOKEN }}
 
             
