@@ -48,7 +48,7 @@ jobs:
 
     - name: Run Image
       run: | 
-        docker rum --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN docker://scribesecurity/platforms:dev-latest discover k8s
+        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN docker://scribesecurity/platforms:dev-latest discover k8s
            
 
     - name: Discover K8S
