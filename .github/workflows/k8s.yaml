@@ -54,9 +54,9 @@ jobs:
         print-config: true
         command: discover
         platform: k8s
-        args: >-
-              --url https://localhost:8443
-              --token ${{ env.K8S_TOKEN }}
+        # args: >-
+        #       --url ${{ env.K8S_URL }}
+        #       --token ${{ env.K8S_TOKEN }}
 
             
 
