@@ -48,25 +48,11 @@ jobs:
         curl -v -k -H "Authorization: Bearer ${K8S_TOKEN}" "${K8S_URL}/livez?verbose"
 
     - name: Deploy image
-        run: |
+      run: |
           kubeclt run nginx --image=nginx --namespace=default
     
-        - name: Discover K8s
+    - name: Discover K8s
       run: | 
-        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:dev-latest discover k8s
-           
-
-    - name: Discover K8S
-      uses: scribe-security/action-platforms@dev
-      with:
-        log-level: DEBUG
-        print-config: true
-        command: discover
-        platform: k8s
-        # args: >-
-        #       --url ${{ env.K8S_URL }}
-        #       --token ${{ env.K8S_TOKEN }}
-
-            
+        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:dev-latest discover k8s           
 
 
