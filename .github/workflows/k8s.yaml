@@ -11,10 +11,10 @@ jobs:
 
     - name: Pull platforms image
       run: docker pull scribesecurity/platforms:dev-latest
-      
-    - uses: actions/checkout@v4
-      with:
-        repository: medyagh/local-dev-example-with-minikube
+
+    # - uses: actions/checkout@v4
+    #   with:
+    #     repository: medyagh/local-dev-example-with-minikube
     - name: Start minikube
       uses: medyagh/setup-minikube@latest
     - name: Try the cluster!
@@ -37,8 +37,6 @@ jobs:
         kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=my-role --serviceaccount=default:my-serviceaccount
         kubectl get clusterrolebinding my-sa-admin-binding -o yaml
         K8S_TOKEN=$(kubectl create token my-serviceaccount)
-        echo "K8S_TOKEN is of length: ${#K8S_TOKEN}"
-        echo "First few characters of K8S_TOKEN: ${K8S_TOKEN:0:5}..."
         echo "K8S_TOKEN=$K8S_TOKEN" >> $GITHUB_ENV
            
     - name: Print token
@@ -48,9 +46,12 @@ jobs:
         echo "K8S_URL='${K8S_URL}'" | cat -v
         echo "K8S_TOKEN=${K8S_TOKEN}:0:5..."
         curl -v -k -H "Authorization: Bearer ${K8S_TOKEN}" "${K8S_URL}/livez?verbose"
-#        echo "curl -k -H \"Authorization: Bearer $K8S_TOKEN\" \"$K8S_URL/livez\""
 
-    - name: Run Image
+    - name: Deploy image
+        run: |
+          kubeclt run nginx --image=nginx --namespace=default
+    
+        - name: Discover K8s
       run: | 
         docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:dev-latest discover k8s
            
@@ -67,20 +68,5 @@ jobs:
         #       --token ${{ env.K8S_TOKEN }}
 
             
-
-
-    # - name: Build image
-    #   run: |
-    #     minikube image build -t local/devex:v1 .        
-    # - name: Deploy to minikube
-    #   run: |
-    #     kubectl apply -f deploy/k8s.yaml
-    #     kubectl wait --for=condition=ready pod -l app=local-devex
-    # - name: Test service URLs
-    #   run: |
-    #     minikube service list
-    #     minikube service local-devex-svc --url
-    #     echo "------------------opening the service------------------"
-    #     curl $(minikube service local-devex-svc --url)        
 
 
