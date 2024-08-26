@@ -14,10 +14,9 @@ on:
         default: "1.0.0"
         type: string
       targets:
-        description: "Docker images for demo"
+        description: "Comma-separated list of Docker images for demo"
         required: true
-        default: |
-          - "nginx:latest"
+        default: "nginx:latest"
         type: string
       policy_branch:
         description: "Policy branch for verification"
@@ -103,16 +102,21 @@ jobs:
 
       - name: Deploy image
         run: |
-            kubectl create namespace ${{env.NAMESPACE}} || true
             
+            set -x
+            kubectl create namespace ${{env.NAMESPACE}} || true
             targets="${{ inputs.targets }}"
-            IFS=$'\n' read -rd '' -a target_array <<<"$targets"
+            IFS=',' read -r -a target_array <<< "$targets"
             for target in "${target_array[@]}"; do
-                echo "Target: $target"
-                target=$(echo "$target" | xargs | tr -d '"')
-                kubectl run "${target//[:\/]/-}-pod" --image="$target" --namespace="${{ env.NAMESPACE }}"
+              target=$(echo "$target" | xargs)           
+              if [ -n "$target" ]; then
+                echo "Deploying image: $target"
+                # Replace invalid characters for pod name and deploy
+                pod_name=$(echo "$target" | tr ':/' '-')
+                kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}"
+              fi
             done
-      
+
       - name: Discover K8s
         run: | 
           docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db \
