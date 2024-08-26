@@ -139,13 +139,17 @@ jobs:
             --db.local.path /db/platforms.db \
             discover k8s \
             --scope.namespace ${{env.NAMESPACE}}
-          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
+            -v $(pwd):/db \
+            -v /var/run/docker.sock:/var/run/docker.sock \
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
             bom k8s \
             --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
   
-          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
+            -v $(pwd):/db \
+            -v /var/run/docker.sock:/var/run/docker.sock \
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
             verify k8s \
