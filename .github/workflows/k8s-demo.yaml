@@ -107,15 +107,29 @@ jobs:
             kubectl create namespace ${{env.NAMESPACE}} || true
             targets="${{ inputs.targets }}"
             IFS=',' read -r -a target_array <<< "$targets"
+
             for target in "${target_array[@]}"; do
               target=$(echo "$target" | xargs)           
+              
               if [ -n "$target" ]; then
                 echo "Deploying image: $target"
                 # Replace invalid characters for pod name and deploy
                 pod_name=$(echo "$target" | tr ':/' '-')
                 kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}"
+    
+                # Wait for the pod to either run or terminate
+                kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ready pod/"$pod_name"-pod --timeout=120s
+                
+                # Check the status of the pod
+                pod_status=$(kubectl get pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}" --output=jsonpath='{.status.phase}')
+                
+                if [ "$pod_status" = "Failed" ] || [ "$pod_status" = "Succeeded" ]; then
+                    echo "Pod $pod_name-pod terminated with status: $pod_status"
+                    exit 1
+                fi
               fi
             done
+
 
       - name: Discover K8s
         run: | 
