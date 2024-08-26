@@ -1,6 +1,7 @@
 name: Usage of K8s Demo
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
