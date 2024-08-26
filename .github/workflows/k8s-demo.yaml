@@ -73,7 +73,7 @@ jobs:
       - name: Try the cluster!
         run: | 
           set -x
-          minikube delete || true
+          minikube stop || true
           minikube start --driver=docker
           eval $(minikube docker-env) || true
           kubectl version
