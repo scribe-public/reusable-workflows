@@ -1,4 +1,4 @@
-name: Demo usage of SSDF Policy
+name: Usage of Github Demo
 
 on:
   workflow_dispatch:
@@ -7,8 +7,8 @@ jobs:
 
 # Typically here will come the jobs that build a docker image and push it to DockerHub
 
-  evaluate_ssdf:  
-    name: Evaluate SSDF
+  discover_evaluate_github:  
+    name: Discover and Evaluate Github
     uses: scribe-public/reusable-workflows/.github/workflows/github-demo.yaml@main
     with:
         scribe_product_name: "Test-Product"

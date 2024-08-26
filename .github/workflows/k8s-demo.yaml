@@ -1,4 +1,4 @@
-name: SSDF Evaluation
+name: K8s Discovery and Evaluation Demo
 
 on:
   workflow_call:
@@ -58,7 +58,7 @@ env:
     DEBUG: false
 
 jobs:
-  scm_evaluation:
+  k8s_evaluation:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

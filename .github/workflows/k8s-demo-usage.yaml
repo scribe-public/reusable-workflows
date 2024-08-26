@@ -1,4 +1,4 @@
-name: Demo usage of SSDF Policy
+name: Usage of K8s Demo
 
 on:
   workflow_dispatch:
@@ -7,8 +7,8 @@ jobs:
 
 # Typically here will come the jobs that build a docker image and push it to DockerHub
 
-  evaluate_ssdf:  
-    name: Evaluate SSDF
+  discover_evaluate_k8s:  
+    name: Discover and Evaluate K8s
     uses: scribe-public/reusable-workflows/.github/workflows/k8s-demo.yaml@main
     with:
         scribe_product_name: "Test-Product"
