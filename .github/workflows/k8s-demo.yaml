@@ -113,6 +113,7 @@ jobs:
               
               if [ -n "$target" ]; then
                 echo "Deploying image: $target"
+                docker pull "$target"
                 # Replace invalid characters for pod name and deploy
                 pod_name=$(echo "$target" | tr ':/' '-')
                 kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}"
