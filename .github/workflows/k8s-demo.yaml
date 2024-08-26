@@ -66,6 +66,13 @@ jobs:
     steps:
       - name: Pull platforms image
         run: docker pull scribesecurity/platforms:dev-latest
+    
+      - name: Install valint
+        run: |
+          set -x
+          curl -sSfL https://get.scribesecurity.com/install.sh  | sh -s -- -t valint -D
+          valint --version
+
   
       - name: Start minikube
         uses: medyagh/setup-minikube@latest
@@ -118,6 +125,7 @@ jobs:
               if [ -n "$target" ]; then
                 echo "Deploying image: $target"
                 docker pull "$target"
+                valint bom "$target" --format cyclonedx-json --product-key "${{ inputs.scribe_product_name }}" --product-version "${{ inputs.scribe_product_version }}" --scribe.client-secret "${{ secrets.SCRIBE_TOKEN }}"
                 docker images
                 minikube image load "$target"
                 minikube image ls
@@ -150,22 +158,30 @@ jobs:
             --db.local.path /db/platforms.db \
             discover k8s \
             --scope.namespace ${{env.NAMESPACE}}
-          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
-            -v $(pwd):/db \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            scribesecurity/platforms:dev-latest \
-            --db.local.path /db/platforms.db \
-            bom k8s \
-            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
-  
-          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
-            -v $(pwd):/db \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            scribesecurity/platforms:dev-latest \
-            --db.local.path /db/platforms.db \
-            verify k8s \
-            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
 
+            docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
+              scribesecurity/platforms:dev-latest \
+              --db.local.path /db/platforms.db \
+              evidence k8s \
+              --scope.namespace ${{env.NAMESPACE}}
+
+        #   docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
+        #     -v $(pwd):/db \
+        #     -v /var/run/docker.sock:/var/run/docker.sock \
+        #     scribesecurity/platforms:dev-latest \
+        #     --db.local.path /db/platforms.db \
+        #     bom k8s \
+        #     --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
+  
+        #   docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
+        #     -v $(pwd):/db \
+        #     -v /var/run/docker.sock:/var/run/docker.sock \
+        #     scribesecurity/platforms:dev-latest \
+        #     --db.local.path /db/platforms.db \
+        #     verify k8s \
+        #     --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
+
+        
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
