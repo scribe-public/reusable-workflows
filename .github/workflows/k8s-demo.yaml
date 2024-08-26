@@ -102,7 +102,6 @@ jobs:
             for target in targets; do
                 kubectl run ${target}-pod --image=${target} --namespace=${{ inputs.scribe_product_name }}
             done
-            kubeclt run ${{inputs.targets}}-pod --image=${{ inputs.targets}} --namespace=${{ inputs.scribe_product_name }}
       
       - name: Discover K8s
         run: | 
@@ -117,6 +116,8 @@ jobs:
           bom k8s \
             --image.mapping ${{ inputs.scribe_product_name}}::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
   
-  
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db\
+          verify k8s \
+            --image.mapping ${{ inputs.scribe_product_name}}::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
   
 
