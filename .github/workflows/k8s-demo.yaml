@@ -104,7 +104,6 @@ jobs:
       - name: Deploy image
         run: |
             kubectl create namespace ${{env.NAMESPACE}} || true
-            targets=${{ inputs.targets }}
             
             targets="${{ inputs.targets }}"
             IFS=$'\n' read -rd '' -a target_array <<<"$targets"
