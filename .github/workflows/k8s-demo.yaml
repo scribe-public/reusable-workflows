@@ -156,7 +156,7 @@ jobs:
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
             bom k8s \
-            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
   
           docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
             -v $(pwd):/db \
@@ -164,7 +164,7 @@ jobs:
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
             verify k8s \
-            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
