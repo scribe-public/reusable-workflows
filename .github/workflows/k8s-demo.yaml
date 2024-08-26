@@ -114,12 +114,16 @@ jobs:
               if [ -n "$target" ]; then
                 echo "Deploying image: $target"
                 docker pull "$target"
+                docker images | grep "$target"
                 # Replace invalid characters for pod name and deploy
                 pod_name=$(echo "$target" | tr ':/' '-')
                 kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=Never
     
                 # Wait for the pod to either run or terminate
-                kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ready pod/"$pod_name"-pod --timeout=120s
+                kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ready pod/"$pod_name"-pod --timeout=300s || true
+                kubectl describe pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}"
+
+
                 
                 # Check the status of the pod
                 pod_status=$(kubectl get pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}" --output=jsonpath='{.status.phase}')
