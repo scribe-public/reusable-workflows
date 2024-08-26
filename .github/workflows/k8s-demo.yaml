@@ -75,7 +75,7 @@ jobs:
           set -x
           minikube stop || true
           minikube start --driver=docker
-          eval $(minikube docker-env) || true
+          eval $(minikube -p minikube docker-env)
           kubectl version
       
       - name: Get IP
