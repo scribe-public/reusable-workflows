@@ -13,6 +13,6 @@ jobs:
     with:
         scribe_product_name: "Test-Product"
         scribe_product_version: "Some-Version"
-        targets: "busybox:latest,nginx:latest"
+        targets: "nginx:latest"
     secrets: 
         SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
