@@ -119,6 +119,8 @@ jobs:
                 echo "Deploying image: $target"
                 docker pull "$target"
                 docker images
+                minikube image load "$target"
+                minikube image ls
                 # Replace invalid characters for pod name and deploy
                 pod_name=$(echo "$target" | tr ':/' '-')
                 kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=Never
