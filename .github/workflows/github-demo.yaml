@@ -40,6 +40,9 @@ on:
       SCRIBE_TOKEN:
         description: "Scribe token"
         required: true
+      GH_TOKEN:
+        description: "GitHub token with org, repo and workflows read permissions"
+        required: true
 env:
     PLATFORMS_VERSION: "dev-latest"
     PLATFORMS_DB_PATH: github.platforms.db
@@ -57,7 +60,7 @@ jobs:
   ssdf_evaluation:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
 
     steps:
