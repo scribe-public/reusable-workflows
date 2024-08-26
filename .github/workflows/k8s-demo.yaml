@@ -105,8 +105,13 @@ jobs:
         run: |
             kubectl create namespace ${{env.NAMESPACE}} || true
             targets=${{ inputs.targets }}
-            for target in targets; do
-                kubectl run ${target}-pod --image=${target} --namespace=${{env.NAMESPACE}}
+            
+            targets="${{ inputs.targets }}"
+            IFS=$'\n' read -rd '' -a target_array <<<"$targets"
+            for target in "${target_array[@]}"; do
+                echo "Target: $target"
+                target=$(echo "$target" | xargs | tr -d '"')
+                kubectl run "${target//[:\/]/-}-pod" --image="$target" --namespace="${{ env.NAMESPACE }}"
             done
       
       - name: Discover K8s
