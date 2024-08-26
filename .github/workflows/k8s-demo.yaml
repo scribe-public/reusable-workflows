@@ -136,5 +136,10 @@ jobs:
             --db.local.path /db/platforms.db \
             verify k8s \
             --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+            path: platforms.db
   
 
