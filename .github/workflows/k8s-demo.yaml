@@ -97,7 +97,7 @@ jobs:
       
       - name: Set Namespace Env
         run: | 
-          echo \"${{ inputs.scribe_product_name }}\" | tr '[:upper:]' '[:lower:]')
+          echo \"${{ inputs.scribe_product_name }}\" | tr '[:upper:]' '[:lower:]'
           echo "NAMESPACE=$(echo \"${{ inputs.scribe_product_name }}\" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
 
