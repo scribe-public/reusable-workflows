@@ -1,0 +1,122 @@
+name: SSDF Evaluation
+
+on:
+  workflow_call:
+    inputs:
+      scribe_product_name:
+        description: "Scribe Product Name"
+        required: false
+        default: "My-First-Product"
+        type: string
+      scribe_product_version:
+        description: "Scribe Product Version"
+        required: false
+        default: "1.0.0"
+        type: string
+      targets:
+        description: "Docker images for demo"
+        required: true
+        default: |
+          - "nginx:latest"
+        type: string
+      policy_branch:
+        description: "Policy branch for verification"
+        required: false
+        default: "sh-5883-ssdf"
+        type: string
+      k8s_discovery_args:
+        description: "K8s Discovery arguments"
+        required: false
+        default: ""
+        type: string
+      k8s_evidence_args:
+        description: "K8s Evidence arguments"
+        required: false
+        default: ""
+        type: string
+      format:
+        description: "Evidence format"
+        required: false
+        default: "cyclonedx-json"
+        type: string
+    secrets:
+      SCRIBE_TOKEN:
+        description: "Scribe token"
+        required: true
+
+env:
+    PLATFORMS_VERSION: "dev-latest"
+    PLATFORMS_DB_PATH: github.platforms.db
+    VALINT_SCRIBE_URL: https://api.scribesecurity.com
+    VALINT_CONTEXT_TYPE: "github"
+    VALINT_OUTPUT_DIRECTORY: evidence/github
+    LOG_LEVEL: "INFO"
+    VALINT_LOG_LEVEL: "info"
+    VALINT_DISABLE_EVIDENCE_CACHE: false
+    VALINT_SCRIBE_ENABLE: true 
+    DOCKER_DRIVER: overlay2
+    DEBUG: false
+
+jobs:
+  scm_evaluation:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+    steps:
+      - name: Pull platforms image
+        run: docker pull scribesecurity/platforms:dev-latest
+  
+      - name: Start minikube
+        uses: medyagh/setup-minikube@latest
+      
+      - name: Try the cluster!
+        run: | 
+          kubectl version
+      
+      - name: Get IP
+        run: | 
+          echo "K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}' | sed -r "s/\x1b\[[0-9;]*m//g" )" >> $GITHUB_ENV
+
+      - name: Print IP from env.K8S_URL
+        run: echo "${{ env.K8S_URL }}"
+  
+      - name: Create and get token
+        run: |
+          set -x
+          kubectl create serviceaccount my-serviceaccount -o yaml
+          kubectl create clusterrole my-role \
+            --verb=get --verb=watch --verb=list \
+            --resource=secrets,pods,namespaces,deployments,rs.apps
+          kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=my-role --serviceaccount=default:my-serviceaccount
+          
+          K8S_TOKEN=$(kubectl create token my-serviceaccount)
+          echo "K8S_TOKEN=$K8S_TOKEN" >> $GITHUB_ENV
+             
+      - name: Deploy image
+        run: |
+            kubectl create namespace ${{ inputs.scribe_product_name }} || true
+            targets=${{ inputs.targets }}
+            for target in targets; do
+                kubectl run ${target}-pod --image=${target} --namespace=${{ inputs.scribe_product_name }}
+            done
+            kubeclt run ${{inputs.targets}}-pod --image=${{ inputs.targets}} --namespace=${{ inputs.scribe_product_name }}
+      
+      - name: Discover K8s
+        run: | 
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db \
+            discover k8s \
+            --scope.namespace ${{ inputs.scribe_product_name }}
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db\
+            evidence k8s \
+            --image.mapping ${{ inputs.scribe_product_name}}::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+          
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db\
+          bom k8s \
+            --image.mapping ${{ inputs.scribe_product_name}}::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+  
+  
+  
+

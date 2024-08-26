@@ -1,0 +1,17 @@
+name: Demo usage of SSDF Policy
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+# Typically here will come the jobs that build a docker image and push it to DockerHub
+
+  evaluate_ssdf:  
+    name: Evaluate SSDF
+    uses: scribe-public/reusable-workflows/.github/workflows/github-demo.yaml@main
+    with:
+        scribe_product_name: "Scribot"
+        scribe_product_version: "v0.0.1-discovery-demo"
+    secrets: 
+        SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}

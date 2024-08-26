@@ -1,0 +1,98 @@
+name: Github Discovery and Verification Demo
+
+on:
+  workflow_call:
+    inputs:
+      scribe_product_name:
+        description: "Scribe Product Name"
+        required: true
+        type: string
+      scribe_product_version:
+        description: "Scribe Product Version"
+        required: true
+        type: string
+      policy:
+        description: "Policy to run on repository evidence"
+        required: false
+        default: "ssdf-repo@discovery"
+        type: string
+      policy_branch:
+        description: "Policy branch for verification"
+        required: false
+        default: "sh-5883-ssdf"
+        type: string
+      discover_args:
+        description: "Discovery arguments"
+        required: false
+        default: "--commit.skip --workflow.skip"
+        type: string
+      evidence_args:
+        description: "Evidence arguments"
+        required: false
+        default: ""
+        type: string
+      format:
+        description: "Evidence format"
+        required: false
+        default: "cyclonedx-json"
+        type: string
+    secrets:
+      SCRIBE_TOKEN:
+        description: "Scribe token"
+        required: true
+env:
+    PLATFORMS_VERSION: "dev-latest"
+    PLATFORMS_DB_PATH: github.platforms.db
+    VALINT_SCRIBE_URL: https://api.scribesecurity.com
+    VALINT_CONTEXT_TYPE: "github"
+    VALINT_OUTPUT_DIRECTORY: evidence/github
+    LOG_LEVEL: "INFO"
+    VALINT_LOG_LEVEL: "info"
+    VALINT_DISABLE_EVIDENCE_CACHE: false
+    VALINT_SCRIBE_ENABLE: true 
+    DOCKER_DRIVER: overlay2
+    DEBUG: false
+
+jobs:
+  ssdf_evaluation:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Discover Github
+        uses: scribe-security/action-platforms@dev
+        with:
+          command: discover
+          platform: github
+          args: >-
+            --scope.organization *${{ github.repository_owner}}
+            --scope.repository *${{ github.repository}}
+            ${{ inputs.discover_args }}
+            
+
+      - name: Evidence Github
+        uses: scribe-security/action-platforms@dev
+        with:
+          command: evidence
+          platform: github
+          args: >-
+            --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            ${{ inputs.evidence_args }}
+
+      - name: Verify Github
+        uses: scribe-security/action-platforms@dev
+        with:
+          command: verify
+          platform: github
+          valint_args: --valint.bundle-branch ${{ inputs.policy_branch }}
+          args: >-
+            --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            --repository.policy ssdf-repo@discovery
+            --repo-policy-skip-aggregate

@@ -1,7 +1,6 @@
 name: k8s
 
 on:
-  - push
   - workflow_dispatch
 jobs:
   job1:
@@ -49,7 +48,7 @@ jobs:
 
     - name: Deploy image
       run: |
-          kubeclt run nginx --image=nginx --namespace=default
+          kubectl run nginx --image=nginx --namespace=default
     
     - name: Discover K8s
       run: | 
