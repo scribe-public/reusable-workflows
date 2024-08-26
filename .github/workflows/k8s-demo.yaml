@@ -61,10 +61,9 @@ jobs:
   k8s_evaluation:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      NAMESPACE: $(echo "${{ inputs.scribe_product_name }}" | tr '[:upper:]' '[:lower:]')
+
     steps:
       - name: Pull platforms image
         run: docker pull scribesecurity/platforms:dev-latest
@@ -97,27 +96,27 @@ jobs:
              
       - name: Deploy image
         run: |
-            kubectl create namespace ${{ inputs.scribe_product_name }} || true
+            kubectl create namespace $NAMESPACE || true
             targets=${{ inputs.targets }}
             for target in targets; do
-                kubectl run ${target}-pod --image=${target} --namespace=${{ inputs.scribe_product_name }}
+                kubectl run ${target}-pod --image=${target} --namespace=$NAMESPACE
             done
       
       - name: Discover K8s
         run: | 
           docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db \
             discover k8s \
-            --scope.namespace ${{ inputs.scribe_product_name }}
+            --scope.namespace $NAMESPACE
           docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db\
             evidence k8s \
-            --image.mapping ${{ inputs.scribe_product_name}}::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+            --image.mapping $NAMESPACE::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
           
           docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db\
           bom k8s \
-            --image.mapping ${{ inputs.scribe_product_name}}::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+            --image.mapping $NAMESPACE::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
   
           docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -v $(pwd):/db scribesecurity/platforms:dev-latest --db.local.path platforms.db\
           verify k8s \
-            --image.mapping ${{ inputs.scribe_product_name}}::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
+            --image.mapping $NAMESPACE::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
   
 
