@@ -206,7 +206,7 @@ jobs:
               --valint.scribe.enable \
               --valint.scribe.client-secret ${{ secrets.SCRIBE_TOKEN }} \
               k8s \
-              --scope.namespace ${{env.NAMESPACE}}
+              --scope.namespace ${{env.NAMESPACE}} \
               --namespace.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
               --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
               || true
