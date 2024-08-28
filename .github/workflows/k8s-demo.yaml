@@ -202,8 +202,12 @@ jobs:
             docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
               scribesecurity/platforms:dev-latest \
               --db.local.path /db/platforms.db \
-              evidence k8s \
+              evidence \
+              --valint.scribe.enable \
+              --valint.client.secret ${{ secrets.SCRIBE_TOKEN }} \
+              k8s \
               --scope.namespace ${{env.NAMESPACE}}
+              --mapping.image ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
 
         #   docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
         #     -v $(pwd):/db \
