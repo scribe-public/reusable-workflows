@@ -37,7 +37,7 @@ Note:
 * The `scribe_product_name` and `scribe_product_version` are a user defined name and version of the product on ScribeHub. You do not need to create the product on ScribeHub, the workflow will create it for you.
 
 2. Add the following secrets to your repository:
-* SCRIBE_TOKEN ((Generate it on Scribehub)[https://app.scribesecurity.com/settings/tokens])
+* SCRIBE_TOKEN ([Generate it on Scribehub](https://app.scribesecurity.com/settings/tokens))
 * GH_TOKEN (A Github token with read access to organization and repository data)
 * DOCKERHUB_USERNAME
 * DOCKERHUB_PASSWORD (The content can be the password or a token)
@@ -45,8 +45,8 @@ Note:
 3. Run the workflow.
 
 ### Expected Results
-* On the (ScribeHub products page)[https://app.scribesecurity.com/producer-products] you will see a new/updated product with the name and version you provided. Scribe will automatically perform a vulnerability analysis of the new Docker image.
-* On the (ScribeHub policy page)[https://app.scribesecurity.com/policy/evaluation] you will see a new policy evaluation for the product you created. Use the filters to choose your product and view the results.
+* On the [ScribeHub products page](https://app.scribesecurity.com/producer-products) you will see a new/updated product with the name and version you provided. Scribe will automatically perform a vulnerability analysis of the new Docker image.
+* On the [ScribeHub policy page](https://app.scribesecurity.com/policy/evaluation) you will see a new policy evaluation for the product you created. Use the filters to choose your product and view the results.
 
 
 ## Github Discovery and Evaluation Demo
@@ -54,7 +54,7 @@ Note:
 The Github Discovery and Evaluation Demo is a simple reusable workflow that generates evidence and performs policy evaluation of some policies using the Scribe tools.
 
 ### Usage
-A reference usage is given (here)[.github/workflows/github-demo-usage.yaml]
+A reference usage is given [here](.github/workflows/github-demo-usage.yaml)
 
 1. Add the use of the workflow in a build workflow file, or in a new workflow file that will be triggered by the end of your build workflow.
 
@@ -96,7 +96,7 @@ The K8S Discovery and Evaluation Demo is a simple reusable workflow that generat
 The workflow fires a minikube cluster, deploys the images given, and then performs the discovery and evaluation.
 
 ### Usage
-A reference usage is given (here)[.github/workflows/k8s-demo-usage.yaml]
+A reference usage is given [here](.github/workflows/k8s-demo-usage.yaml)
 
 1. Add the use of the workflow in a build workflow file, or in a new workflow file that will be triggered by the end of your build workflow.
 
