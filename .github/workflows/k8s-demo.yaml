@@ -87,15 +87,31 @@ jobs:
       - name: Sign in to DockerHub
         run: |
           set -x
-          echo "First 3 characters of DockerHub username: ${${{ secrets.DOCKERHUB_USERNAME }}:0:3}"
-          echo "First 3 characters of DockerHub password: ${${{ secrets.DOCKERHUB_PASSWORD }}:0:3}"
-          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && [ -n "${{ secrets.DOCKERHUB_PASSWORD }}" ]; then
+          # Assign GitHub Actions secrets to shell variables
+          DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+          DOCKERHUB_PASSWORD="${{ secrets.DOCKERHUB_PASSWORD }}"
+          
+          # Print the first 3 characters of the username and password if they exist
+          if [ -n "$DOCKERHUB_USERNAME" ]; then
+            echo "First 3 characters of DockerHub username: ${DOCKERHUB_USERNAME:0:3}"
+          else
+            echo "DockerHub username not provided."
+          fi
+          
+          if [ -n "$DOCKERHUB_PASSWORD" ]; then
+            echo "First 3 characters of DockerHub password: ${DOCKERHUB_PASSWORD:0:3}"
+          else
+            echo "DockerHub password not provided."
+          fi
+          
+          # If DockerHub username and password are provided, log in
+          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_PASSWORD" ]; then
             echo "Logging in to DockerHub"
-            echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
           else
             echo "DockerHub username and/or password not provided. Skipping login."
           fi
-
+          
 
   
       - name: Start minikube
