@@ -204,7 +204,7 @@ jobs:
               --db.local.path /db/platforms.db \
               evidence \
               --valint.scribe.enable \
-              --valint.client.secret ${{ secrets.SCRIBE_TOKEN }} \
+              --valint.scribe.client-secret ${{ secrets.SCRIBE_TOKEN }} \
               k8s \
               --scope.namespace ${{env.NAMESPACE}}
               --mapping.image ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
