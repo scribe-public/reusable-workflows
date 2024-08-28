@@ -87,10 +87,13 @@ jobs:
       - name: Sign in to DockerHub
         run: |
           set -x
-          # if dockerhub username and password are provided, login
+          echo "First 3 characters of DockerHub username: ${${{ secrets.DOCKERHUB_USERNAME }}:0:3}"
+          echo "First 3 characters of DockerHub password: ${${{ secrets.DOCKERHUB_PASSWORD }}:0:3}"
           if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && [ -n "${{ secrets.DOCKERHUB_PASSWORD }}" ]; then
             echo "Logging in to DockerHub"
             echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          else
+            echo "DockerHub username and/or password not provided. Skipping login."
           fi
 
 
