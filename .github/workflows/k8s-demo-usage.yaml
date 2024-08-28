@@ -17,3 +17,5 @@ jobs:
         targets: "nginx:latest"
     secrets: 
         SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}

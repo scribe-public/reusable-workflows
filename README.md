@@ -49,4 +49,84 @@ Note:
 * On the (ScribeHub policy page)[https://app.scribesecurity.com/policy/evaluation] you will see a new policy evaluation for the product you created. Use the filters to choose your product and view the results.
 
 
+## Github Discovery and Evaluation Demo
+### Background
+The Github Discovery and Evaluation Demo is a simple reusable workflow that generates evidence and performs policy evaluation of some policies using the Scribe tools.
 
+### Usage
+A reference usage is given (here)[.github/workflows/github-demo-usage.yaml]
+
+1. Add the use of the workflow in a build workflow file, or in a new workflow file that will be triggered by the end of your build workflow.
+
+2. The reference workflow:
+
+```yaml
+name: Usage of Github Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+# Typically here will come the jobs that build a docker image and push it to DockerHub
+
+  discover_evaluate_github:  
+    name: Discover and Evaluate Github
+    uses: scribe-public/reusable-workflows/.github/workflows/github-demo.yaml@main
+    with:
+        scribe_product_name: "Test-Product"
+        scribe_product_version: "Some-Version"
+    secrets: 
+        SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+```
+
+3. Add the following secrets to your repository:
+* SCRIBE_TOKEN
+* GH_TOKEN (A Github token with read access to organization and repository data)
+
+4. Define the product name and version. The product name and version are used to group the evidence and policy evaluation results on ScribeHub.
+
+5. Run the workflow.
+
+## K8S Discovery and Evaluationa Demo
+### Background
+The K8S Discovery and Evaluation Demo is a simple reusable workflow that generates evidence and performs policy evaluation of some policies using the Scribe tools.
+
+The workflow fires a minikube cluster, deploys the images given, and then performs the discovery and evaluation.
+
+### Usage
+A reference usage is given (here)[.github/workflows/k8s-demo-usage.yaml]
+
+1. Add the use of the workflow in a build workflow file, or in a new workflow file that will be triggered by the end of your build workflow.
+
+2. The reference workflow:
+
+```yaml
+name: Usage of K8s Demo
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+
+# Typically here will come the jobs that build a docker image and push it to DockerHub
+
+  discover_evaluate_k8s:  
+    name: Discover and Evaluate K8s
+    uses: scribe-public/reusable-workflows/.github/workflows/k8s-demo.yaml@main
+    with:
+        scribe_product_name: "Test-Product"
+        scribe_product_version: "Some-Version"
+        targets: "nginx:latest"
+    secrets: 
+        SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+```
+
+3. Add the SCRIBE_TOKEN secret to your repository.
+
+4. Define the product name and version. The product name and version are used to group the evidence and policy evaluation results on ScribeHub.
+
+5. Define the targets. The targets are the images that will be deployed in the minikube cluster. 
+The targets field is a comma separated list of images. The images must be available in a public registry.
