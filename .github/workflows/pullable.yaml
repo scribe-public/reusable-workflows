@@ -1,0 +1,65 @@
+name: Minikube docker-pullable demo
+
+on:
+    - push
+    - workflow_dispatch
+
+env:
+  K8S_URL: "Not set"
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    name: build example and deploy to minikube
+    steps:
+
+    - name: Pull platforms image
+      run: docker pull scribesecurity/platforms:dev-latest
+
+    # - uses: actions/checkout@v4
+    #   with:
+    #     repository: medyagh/local-dev-example-with-minikube
+    - name: Start minikube
+      uses: medyagh/setup-minikube@latest
+    - name: Try the cluster!
+      run: | 
+        kubectl version
+        kubectl get pods -A
+
+    - name: Get IP
+      run: | 
+        echo "K8S_URL=$(kubectl cluster-info | grep 'Kubernetes control plane' | awk '{print $NF}' | sed -r "s/\x1b\[[0-9;]*m//g" )" >> $GITHUB_ENV
+    - name: Print IP
+      run: echo "${{ env.K8S_URL }}"
+
+    - name: Create and get token
+      run: |
+        set -x
+        kubectl create serviceaccount my-serviceaccount -o yaml
+        kubectl create clusterrole my-role \
+        --verb=get --verb=watch --verb=list \
+        --resource=secrets,pods,namespaces,deployments,rs.apps
+        kubectl create clusterrolebinding my-sa-admin-binding --clusterrole=my-role --serviceaccount=default:my-serviceaccount
+        kubectl get clusterrolebinding my-sa-admin-binding -o yaml
+        K8S_TOKEN=$(kubectl create token my-serviceaccount)
+        echo "K8S_TOKEN=$K8S_TOKEN" >> $GITHUB_ENV
+           
+    - name: Print token
+      run: | 
+        set -x
+        echo "First few characters of K8S_TOKEN: ${K8S_TOKEN:0:5}..."
+        echo "K8S_URL='${K8S_URL}'" | cat -v
+        echo "K8S_TOKEN=${K8S_TOKEN}:0:5..."
+        curl -v -k -H "Authorization: Bearer ${K8S_TOKEN}" "${K8S_URL}/livez?verbose"
+
+    - name: Deploy image
+      run: |
+          kubectl run nginx --image=nginx:latest --namespace=default
+    
+    - name: Discover K8s
+      run: | 
+        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:dev-latest discover k8s           
+
+
+    - name: SBOM images
+      run: | 
+        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:dev-latest bom k8s  --image.mapping *::*::*::pullable:1.0
