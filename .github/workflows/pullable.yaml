@@ -62,4 +62,4 @@ jobs:
 
     - name: SBOM images
       run: | 
-        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:latest bom k8s  --image.mapping "*::*::*::pullable:1.0"
+        docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN scribesecurity/platforms:latest bom k8s  --image.mapping "*::*::*::pullable::1.0"
