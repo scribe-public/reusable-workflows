@@ -54,6 +54,7 @@ env:
     VALINT_SCRIBE_URL: https://api.scribesecurity.com
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
+    VALINT_ATTEST_REPORT_AGGREGATED: true
     LOG_LEVEL: "INFO"
     VALINT_LOG_LEVEL: "info"
     VALINT_DISABLE_EVIDENCE_CACHE: false
