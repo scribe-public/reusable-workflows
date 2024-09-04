@@ -126,7 +126,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Generate SBOM for docker image
-        uses: scribe-security/action-bom@master
+        uses: scribe-security/action-bom@dev
         with:
           target: ${{ inputs.target }}
           scribe-enable: true
@@ -136,7 +136,7 @@ jobs:
           scribe-client-secret: ${{ secrets.SCRIBE_TOKEN }}
 
       - name: Verify SBOM
-        uses: scribe-security/action-verify@master
+        uses: scribe-security/action-verify@dev
         with:
           target: ${{ inputs.target }}
           scribe-enable: true
