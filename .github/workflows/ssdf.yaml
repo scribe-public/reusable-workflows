@@ -18,7 +18,7 @@ on:
       policy_branch:
         description: "Policy branch for verification"
         required: false
-        default: "sh-5883-ssdf"
+        default: "dev"
         type: string
       discover_args:
         description: "Discovery arguments"
