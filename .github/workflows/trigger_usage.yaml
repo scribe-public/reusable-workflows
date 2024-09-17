@@ -1,0 +1,20 @@
+name: Demo usage of trigger.yaml reusable workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+# Typically here will come the jobs that build a docker image and push it to DockerHub
+
+  trigger:  
+    name: Trigger Scribe Workflow
+    uses: scribe-public/reusable-workflows/.github/workflows/trigger.yaml@main
+    with:
+        product: "Scribot"
+        version: "v0.0.1-discovery-demo"
+        event_type: "sample-policies-release"
+        github_org: scribe-security
+        github_repo: dogfooding
+    secrets: 
+        WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
