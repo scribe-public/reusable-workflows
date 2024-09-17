@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Send webhook to Repository A
       env:
-        REPO_A_TOKEN: ${{ secrets.REPO_A_ACCESS_TOKEN }}
+        REPO_A_TOKEN: ${{ secrets.WEBHOOK_SECRET }}
       run: |
         curl -X POST \
           -H "Accept: application/vnd.github+json" \
