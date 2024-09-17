@@ -29,4 +29,4 @@ jobs:
         -H "Authorization: Bearer $REPO_A_TOKEN" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         https://api.github.com/repos/scribe-security/dogfooding/actions/workflows/trigerred.yaml/dispatches \
-        -d '{"ref":"main","inputs":{ "data": {"name":"Mona the Octocat","home":"San Francisco, CA"}}}'
+        -d '{"ref":"main","inputs":{ "data": "Workflow dispatch blah blah blah"}}'
