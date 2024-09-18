@@ -37,17 +37,17 @@ jobs:
               env:
                 WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
               run: |
-                set -x
-                echo "${{ toJson(github) }}" > tmp.json
-                cat tmp.json
-                echo "EVENT_DATA=$(cat tmp.json)" >> $GITHUB_ENV
-                echo ${{env.EVENT_DATA}}
 
                 curl -X POST \
                   -H "Accept: application/vnd.github+json" \
                   -H "Authorization: Bearer $WEBHOOK_SECRET" \
                   -H "X-GitHub-Api-Version: 2022-11-28" \
                   https://api.github.com/repos/${{inputs.github_org}}/${{inputs.github_repo}}/dispatches \
-                  -d '{"event_type": "${{inputs.event_type}}", "client_payload": { "product": "${{inputs.product}}" \ 
-                      "version": "${{inputs.version}}", "original_event":${{env.EVENT_DATA}} }}'
+                  -d '{"event_type": "${{inputs.event_type}}", "client_payload": \
+                    '{ \
+                        "product": "${{inputs.product}}" \ 
+                      "version": "${{inputs.version}}",\ 
+                      "org":"${{ github.repository_owner}}", \
+                      "repo":"${{ github.repository}}" \
+                      }'
 
