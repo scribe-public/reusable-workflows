@@ -2,6 +2,7 @@ name: Demo usage of trigger.yaml reusable workflow
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
 

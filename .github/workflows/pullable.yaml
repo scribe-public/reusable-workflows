@@ -1,7 +1,7 @@
 name: Minikube docker-pullable demo
 
 on:
-    - push
+#    - push
     - workflow_dispatch
 
 env:
