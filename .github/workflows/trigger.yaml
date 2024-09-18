@@ -38,7 +38,7 @@ jobs:
                 WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
               run: |
                 set -x
-                echo "${{ toJson(github.event) }}" > tmp.json
+                echo "${{ toJson(github) }}" > tmp.json
                 cat tmp.json
                 echo "EVENT_DATA=$(cat tmp.json)" >> $GITHUB_ENV
                 echo ${{env.EVENT_DATA}}
