@@ -40,7 +40,7 @@ jobs:
                 set -x
                 echo "${{ toJson(github.event) }}" > tmp.json
                 cat tmp.json
-                echo "EVENT_DATA=\"$(cat tmp.json)\"" >> $GITHUB_ENV
+                echo "EVENT_DATA=$(cat tmp.json)" >> $GITHUB_ENV
                 echo ${{env.EVENT_DATA}}
 
                 curl -X POST \
