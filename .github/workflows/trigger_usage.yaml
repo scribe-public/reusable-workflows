@@ -12,8 +12,8 @@ jobs:
     name: Trigger Scribe Workflow
     uses: scribe-public/reusable-workflows/.github/workflows/trigger.yaml@main
     with:
-        product: "Scribot"
-        version: "v0.0.1-discovery-demo"
+        product: "sample-policies"
+        version: "reuable-vars"
         event_type: "sample-policies-release"
         github_org: scribe-security
         github_repo: dogfooding
