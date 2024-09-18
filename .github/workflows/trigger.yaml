@@ -37,8 +37,9 @@ jobs:
               env:
                 WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
               run: |
-                echo "${{ toJson(github.event) }}" > EVENT_PAYLOAD
-                echo "EVENT_DATA=$(cat EVENT_PAYLOAD)" >> $GITHUB_ENV
+                echo "${{ toJson(github.event) }}" > tmp.json
+                cat tmp.json
+                echo "EVENT_DATA=\"$(cat tmp.json)\"" >> $GITHUB_ENV
                 echo ${{env.EVENT_DATA}}
 
                 curl -X POST \
