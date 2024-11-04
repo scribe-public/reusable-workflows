@@ -1,0 +1,38 @@
+name: Upstream&PR Sample Policies
+
+on:
+  workflow_call:
+
+jobs:
+  clone-and-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+
+      - name: Checkout sample-policies
+        uses: actions/checkout@v4
+        with:
+          repository: scribe-public/sample-policies
+          path: './sample-policies'
+
+
+      - name: Copy files
+        run: |
+          rm -rf ./sample-policies/.github
+          rm -rf ./sample-policies/README.md
+          rm -rf ./sample-policies/.git
+          cp -r ./sample-policies/* .
+          rm -rf ./sample-policies
+            
+
+      # Step 4: Create a pull request
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update-sample-policies
+          title: "Update sample policies from public repository"
+          body: "This PR updates the sample policies by pulling from the scribe-public/sample-policies repository."
