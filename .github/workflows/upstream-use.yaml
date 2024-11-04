@@ -1,0 +1,9 @@
+name: Upstream and PR sample-policies repo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upstream:  
+    name: Upstream sample-policies repo
+    uses: scribe-public/reusable-workflows/.github/workflows/upstream-sample-policies.yaml@main
