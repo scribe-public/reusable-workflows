@@ -193,23 +193,23 @@ jobs:
       - name: Discover K8s
         run: | 
           set -x
-          # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
-          #   scribesecurity/platforms:dev-latest \
-          #   --db.local.path /db/platforms.db \
-          #   discover k8s \
-          #   --scope.namespace ${{env.NAMESPACE}}
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
+            scribesecurity/platforms:dev-latest \
+            --db.local.path /db/platforms.db \
+            discover k8s \
+            --scope.namespace ${{env.NAMESPACE}}
 
-            docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
-              scribesecurity/platforms:dev-latest \
-              --db.local.path /db/platforms.db \
-              evidence \
-              --valint.scribe.enable \
-              --valint.scribe.client-secret ${{ secrets.SCRIBE_TOKEN }} \
-              k8s \
-              --scope.namespace ${{env.NAMESPACE}} \
-              --namespace.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
-              --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
-              || true
+            # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
+            #   scribesecurity/platforms:dev-latest \
+            #   --db.local.path /db/platforms.db \
+            #   evidence \
+            #   --valint.scribe.enable \
+            #   --valint.scribe.client-secret ${{ secrets.SCRIBE_TOKEN }} \
+            #   k8s \
+            #   --scope.namespace ${{env.NAMESPACE}} \
+            #   --namespace.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
+            #   --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
+            #   || true
 
 
         #   docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
