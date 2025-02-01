@@ -197,7 +197,8 @@ jobs:
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
             discover k8s \
-            --scope.namespace ${{env.NAMESPACE}}
+            --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
+            --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
 
             # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
             #   scribesecurity/platforms:dev-latest \
