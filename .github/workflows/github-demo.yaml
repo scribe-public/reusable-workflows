@@ -60,7 +60,7 @@ jobs:
   ssdf_evaluation:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GITHUB_EXTERNAL_TOKEN: ${{ secrets.GH_TOKEN }}
       SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
 
     steps:
@@ -73,20 +73,21 @@ jobs:
           command: discover
           platform: github
           args: >-
-            --scope.organization *${{ github.repository_owner}}
-            --scope.repository *${{ github.repository}}
+            --token ${{ secrets.GH_TOKEN}}
+            --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
             ${{ inputs.discover_args }}
             
 
-      - name: Evidence Github
-        uses: scribe-security/action-platforms@dev
-        with:
-          command: evidence
-          platform: github
-          args: >-
-            --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-            --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-            ${{ inputs.evidence_args }}
+      # - name: Evidence Github
+      #   uses: scribe-security/action-platforms@dev
+      #   with:
+      #     command: evidence
+      #     platform: github
+      #     args: >-
+      #       --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+      #       --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+      #       ${{ inputs.evidence_args }}
 
       - name: Verify Github
         uses: scribe-security/action-platforms@dev
