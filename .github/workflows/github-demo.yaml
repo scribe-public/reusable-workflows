@@ -3,6 +3,11 @@ name: Github Discovery and Verification Demo
 on:
   workflow_call:
     inputs:
+      scribe_valint_url:
+        description: "Scribe Valint URL"
+        required: true
+        type: string
+        default: "https://api.scribesecurity.com"
       scribe_product_name:
         description: "Scribe Product Name"
         required: true
@@ -46,7 +51,7 @@ on:
 env:
     PLATFORMS_VERSION: "dev-latest"
     PLATFORMS_DB_PATH: github.platforms.db
-    VALINT_SCRIBE_URL: https://api.scribesecurity.com
+    VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
     LOG_LEVEL: "INFO"
