@@ -198,7 +198,8 @@ jobs:
       - name: Discover K8s
         run: | 
           set -x
-          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
+            -v $(pwd):/db \
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
             --log-level DEBUG \
@@ -206,7 +207,7 @@ jobs:
             --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
             --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
 
-            # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -v $(pwd):/db \
+            # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \ -v $(pwd):/db \
             #   scribesecurity/platforms:dev-latest \
             #   --db.local.path /db/platforms.db \
             #   evidence \
@@ -219,7 +220,7 @@ jobs:
             #   || true
 
 
-          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
             -v $(pwd):/db \
             -v /var/run/docker.sock:/var/run/docker.sock \
             scribesecurity/platforms:dev-latest \
