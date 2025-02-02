@@ -171,7 +171,7 @@ jobs:
                 minikube image ls
                 # Replace invalid characters for pod name and deploy
                 pod_name=$(echo "$target" | tr ':/' '-')
-                kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=Never
+                kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=Always
     
                 # Wait for the pod to either run or terminate
                 kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ready pod/"$pod_name"-pod --timeout=300s || true
