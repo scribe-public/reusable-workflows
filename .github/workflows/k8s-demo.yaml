@@ -90,6 +90,7 @@ jobs:
       - name: Install Scribe Tools
         run: |
           set -x
+          printenv
           curl -sSfL https://get.scribesecurity.com/install.sh  | sh -s -- -t valint -D
           /home/runner/.scribe/bin/valint --version
           docker pull "${{ secrets.DOCKERHUB_USERNAME }}/platforms:dev-latest"
@@ -207,7 +208,7 @@ jobs:
             -v $(pwd):/db \
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
-            --log-level DEBUG \
+            --log-level TRACE \
             discover k8s \
             --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
             --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
@@ -230,7 +231,7 @@ jobs:
             -v /var/run/docker.sock:/var/run/docker.sock \
             scribesecurity/platforms:dev-latest \
             --db.local.path /db/platforms.db \
-            --log-level DEBUG \
+            --log-level TRACE \
             bom k8s \
             --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
   
