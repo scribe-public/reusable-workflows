@@ -41,6 +41,11 @@ on:
         required: false
         default: "cyclonedx-json"
         type: string
+      log-level:
+        description: "Log level"
+        required: false
+        default: "INFO"
+        type: string
     secrets:
       SCRIBE_TOKEN:
         description: "Scribe token"
@@ -54,7 +59,7 @@ env:
     VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
-    LOG_LEVEL: "INFO"
+    # LOG_LEVEL: "INFO"
     VALINT_LOG_LEVEL: "info"
     VALINT_DISABLE_EVIDENCE_CACHE: false
     VALINT_SCRIBE_ENABLE: true 
