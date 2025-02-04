@@ -225,7 +225,7 @@ jobs:
   
 
       - name: Upload artifact DB
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: platforms.db
         #   docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
