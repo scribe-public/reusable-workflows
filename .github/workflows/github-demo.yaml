@@ -77,6 +77,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: INFO
+        run: |
+          printenv
+
       - name: Discover Github
         uses: scribe-security/action-platforms@dev
         with:
