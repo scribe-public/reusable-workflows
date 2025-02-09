@@ -170,7 +170,7 @@ jobs:
               if [ -n "$target" ]; then
                 echo "Deploying image: $target"
                 docker pull "$target"
-                /home/runner/.scribe/bin/valint bom "$target" --format cyclonedx-json --product-key "${{ inputs.scribe_product_name }}" --product-version "${{ inputs.scribe_product_version }}" --scribe.client-secret "${{ secrets.SCRIBE_TOKEN }}"
+                # /home/runner/.scribe/bin/valint bom "$target" --format cyclonedx-json --product-key "${{ inputs.scribe_product_name }}" --product-version "${{ inputs.scribe_product_version }}" --scribe.client-secret "${{ secrets.SCRIBE_TOKEN }}"
                 docker images
                 minikube image load "$target"
                 minikube image ls
