@@ -3,7 +3,7 @@ name: Github-Discovery-101
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
   ORG_NAME: <your-github-org>
-  SCRIBE_PRODUCT_NAME: Hello-GitHub-Local # this is the product name that will be presented in Scribe Hub
+  SCRIBE_PRODUCT_NAME: Hello-GitHub-Discovery # this is the product name that will be presented in Scribe Hub
   SCRIBE_PRODUCT_VERSION: "1.0.1" # this is the product version that will be presented in Scribe Hub
   SCRIBE_TOKEN: ${{ secrets.SCRIBE_SECRET }}
   LOG_LEVEL: DEBUG
