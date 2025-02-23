@@ -21,6 +21,7 @@ jobs:
         with:
             target: /bin
             output-file: runner-sbom-${{ github.run_number }}.json
+            components: files
       
 
       - name: Upload tool output
