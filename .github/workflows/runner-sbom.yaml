@@ -16,16 +16,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Print debug information
+        run: |
+          ls /bin
+          ls /usr
+
+
       - name: Generate cyclonedx json SBOM
         uses: scribe-security/action-bom@v1.5.16
         with:
             target: /bin
-            output-file: runner-sbom-${{ github.run_number }}.json
+            output-file: runner-sbom-bin-${{ github.run_number }}.json
             components: metadata,layers,packages,syft,files,dep
       
-
+      - name: Generate cyclonedx json SBOM
+        uses: scribe-security/action-bom@v1.5.16
+        with:
+          target: /bin
+          output-file: runner-sbom-usr-${{ github.run_number }}.json
+          components: metadata,layers,packages,syft,files,dep
+    
       - name: Upload tool output
         uses: actions/upload-artifact@v4
         with:
           name: tool-output
-          path: runner-sbom-${{ github.run_number }}.json
+          path: runner-sbom-bin-${{ github.run_number }}.json, runner-sbom-usr-${{ github.run_number }}.json
