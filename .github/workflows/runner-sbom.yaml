@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate cyclonedx json SBOM of /usr
         run: |
-          valint bom dir:/usr --output-file runner-sbom-usr-${{ github.run_number }}.json --components files
+          valint bom dir:/usr --filter-regex */proc/.* --output-file runner-sbom-usr-${{ github.run_number }}.json --components files
 
       - name: Upload tool output
         uses: actions/upload-artifact@v4
@@ -48,3 +48,4 @@ jobs:
           path: | 
             runner-sbom-bin-${{ github.run_number }}.json
             runner-sbom-usr-${{ github.run_number }}.json
+
