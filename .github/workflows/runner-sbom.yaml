@@ -1,0 +1,30 @@
+name: Runner SBOM
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  sample-runner:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Generate cyclonedx json SBOM
+        uses: scribe-security/action-bom@v1.5.16
+        with:
+            target: /bin
+            output-file: runner-sbom-${{ github.run_number }}.json
+      
+
+      - name: Upload tool output
+        uses: actions/upload-artifact@v2
+        with:
+          name: tool-output
+          path: runner-sbom-${{ github.run_number }}.json
