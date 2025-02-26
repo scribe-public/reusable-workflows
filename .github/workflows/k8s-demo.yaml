@@ -230,13 +230,13 @@ jobs:
             --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
   
 
-        #   docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
-        #     -v $(pwd):/db \
-        #     -v /var/run/docker.sock:/var/run/docker.sock \
-        #     scribesecurity/platforms:dev-latest \
-        #     --db.local.path /db/platforms.db \
-        #     verify k8s \
-        #     --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
+            -v $(pwd):/db \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            scribesecurity/platforms:dev-latest \
+            --db.local.path /db/platforms.db \
+            verify k8s \
+            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
 
         
       # - name: Upload Artifact
