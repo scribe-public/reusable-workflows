@@ -5,7 +5,7 @@ on:
     inputs:
       scribe_valint_url:
         description: "Scribe Valint URL"
-        required: true
+        required: false
         type: string
         default: "https://api.scribesecurity.com"
       scribe_product_name:
