@@ -84,16 +84,6 @@ jobs:
             ${{ inputs.discover_args }}
             
 
-      # - name: Evidence Github
-      #   uses: scribe-security/action-platforms@dev
-      #   with:
-      #     command: evidence
-      #     platform: github
-      #     args: >-
-      #       --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-      #       --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-      #       ${{ inputs.evidence_args }}
-
       - name: Verify Github
         uses: scribe-security/action-platforms@dev
         with:

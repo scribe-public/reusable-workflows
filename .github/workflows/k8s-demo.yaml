@@ -43,6 +43,11 @@ on:
         required: false
         default: "cyclonedx-json"
         type: string
+      sbom:
+        description: "True if SBOM is to be generated"
+        required: false
+        default: true
+        type: boolean
       docker-registry:
         description: "Docker registry"
         required: false
@@ -202,7 +207,9 @@ jobs:
             #   --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
             #   || true
 
-
+      - name: BOM K8s
+        if: ${{ inputs.sbom == true }}
+        run: |
           docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
             -v $(pwd):/db \
             -v /var/run/docker.sock:/var/run/docker.sock \
