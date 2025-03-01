@@ -92,7 +92,7 @@ jobs:
           set -x
           curl -sSfL https://get.scribesecurity.com/install.sh  | sh -s -- -t valint -D
           /home/runner/.scribe/bin/valint --version
-          docker pull scribesecurity/platforms:dev-latest"
+          docker pull scribesecurity/platforms:dev-latest
     
       - name: Sign in to DockerHub
         uses: docker/login-action@v1
