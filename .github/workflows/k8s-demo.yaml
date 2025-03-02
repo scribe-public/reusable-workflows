@@ -148,6 +148,7 @@ jobs:
         run: |
             
             set -x
+            eval $(minikube docker-env)
             kubectl create namespace ${{env.NAMESPACE}} || true
             targets="${{ inputs.targets }}"
             IFS=',' read -r -a target_array <<< "$targets"
@@ -164,7 +165,7 @@ jobs:
                 minikube image ls
                 # Replace invalid characters for pod name and deploy
                 pod_name=$(echo "$target" | tr ':/.' '-')
-                kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=Always
+                kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=IfNotPresent
     
                 # Wait for the pod to either run or terminate
                 kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ready pod/"$pod_name"-pod --timeout=300s || true
