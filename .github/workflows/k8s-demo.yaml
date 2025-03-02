@@ -98,19 +98,19 @@ jobs:
       # - name: Pull platforms image
       #   run: docker pull scribesecurity/platforms:dev-latest
     
-      - name: Install Scribe Tools
-        run: |
-          set -x
-          curl -sSfL https://get.scribesecurity.com/install.sh  | sh -s -- -t valint -D
-          /home/runner/.scribe/bin/valint --version
-          docker pull scribesecurity/platforms:dev-latest
+      # - name: Install Scribe Tools
+      #   run: |
+      #     set -x
+      #     curl -sSfL https://get.scribesecurity.com/install.sh  | sh -s -- -t valint -D
+      #     /home/runner/.scribe/bin/valint --version
+      #     docker pull scribesecurity/platforms:dev-latest
     
       - name: Sign in to DockerHub
         uses: docker/login-action@v3
         with:
           registry: ${{ inputs.docker-registry }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   
       - name: Start minikube
@@ -165,7 +165,6 @@ jobs:
               if [ -n "$target" ]; then
                 echo "Deploying image: $target"
                 docker pull "$target"
-                # /home/runner/.scribe/bin/valint bom "$target" --format cyclonedx-json --product-key "${{ inputs.scribe_product_name }}" --product-version "${{ inputs.scribe_product_version }}" --scribe.client-secret "${{ secrets.SCRIBE_TOKEN }}"
                 docker images
                 minikube image load "$target"
                 minikube image ls
@@ -176,9 +175,7 @@ jobs:
                 # Wait for the pod to either run or terminate
                 kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ContainersReady pod/"$pod_name"-pod --timeout=300s || true
                 kubectl describe pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}"
-
-                # /home/runner/.scribe/bin/valint verify "$target" --product-key "${{ inputs.scribe_product_name }}" --product-version  "${{ inputs.scribe_product_version }}" --scribe.client-secret "${{ secrets.SCRIBE_TOKEN }}" --bundle-branch "${{ inputs.policy_branch }}" --policy ssdf-image@discovery
-                
+              
                 # Check the status of the pod
                 pod_status=$(kubectl get pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}" --output=jsonpath='{.status.phase}')
                 
