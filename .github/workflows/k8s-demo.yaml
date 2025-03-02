@@ -190,7 +190,7 @@ jobs:
             done
 
       - name: Discover
-        uses: scribe-security/action-platforms@dev-latest
+        uses: scribe-security/action-platforms@master
         with:
           command: discover
           platform: k8s
@@ -225,7 +225,7 @@ jobs:
 
       - name: BOM K8s
         if: ${{ inputs.sbom == true }}
-        uses: scribe-security/action-platforms@dev-latest
+        uses: scribe-security/action-platforms@master
         with:
           command: bom
           platform: k8s
