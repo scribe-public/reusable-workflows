@@ -196,8 +196,8 @@ jobs:
           platform: k8s
           args: >-
             --token ${{ env.K8S_TOKEN}}
-            --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
-            --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
+            --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
+            --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
 
       # - name: Discover K8s
       #   run: | 
