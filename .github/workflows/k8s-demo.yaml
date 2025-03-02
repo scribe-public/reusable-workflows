@@ -88,8 +88,8 @@ jobs:
       packages: write
       contents: read
     env:
-      DOCKER_DRIVER: overlay2
-      DOCKER_CONFIG: ${{ github.workspace }}/.docker
+      #DOCKER_DRIVER: overlay2
+      #DOCKER_CONFIG: ${{ github.workspace }}/.docker
       SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
 
       
