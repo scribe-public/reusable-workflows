@@ -95,8 +95,8 @@ jobs:
       
 
     steps:
-      # - name: Pull platforms image
-      #   run: docker pull scribesecurity/platforms:dev-latest
+      - name: Pull platforms image
+        run: docker pull scribesecurity/platforms:dev-latest
     
       # - name: Install Scribe Tools
       #   run: |
@@ -186,27 +186,28 @@ jobs:
               fi
             done
 
-      - name: Discover
-        uses: scribe-security/action-platforms@master
-        with:
-          command: discover
-          platform: k8s
-          args: >-
-            --token ${{ env.K8S_TOKEN}}
-            --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
-            --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
+      # Commented out due to networking issues    
+      # - name: Discover
+      #   uses: scribe-security/action-platforms@master
+      #   with:
+      #     command: discover
+      #     platform: k8s
+      #     args: >-
+      #       --token ${{ env.K8S_TOKEN}}
+      #       --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
+      #       --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
 
-      # - name: Discover K8s
-      #   run: | 
-      #     set -x
-      #     docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
-      #       -v $(pwd):/db \
-      #       scribesecurity/platforms:dev-latest \
-      #       --db.local.path /db/platforms.db \
-      #       --log-level DEBUG \
-      #       discover k8s \
-      #       --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
-      #       --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
+      - name: Discover K8s
+        run: | 
+          set -x
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
+            -v $(pwd):/db \
+            scribesecurity/platforms:dev-latest \
+            --db.local.path /db/platforms.db \
+            --log-level DEBUG \
+            discover k8s \
+            --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
+            --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
 
       #       # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \ -v $(pwd):/db \
       #       #   scribesecurity/platforms:dev-latest \
@@ -222,24 +223,18 @@ jobs:
 
       - name: BOM K8s
         if: ${{ inputs.sbom == true }}
-        uses: scribe-security/action-platforms@master
-        with:
-          command: bom
-          platform: k8s
-          args: >-
-            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }}
-
-        # run: |
-        #   docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
-        #     -v $(pwd):/db \
-        #     -v /var/run/docker.sock:/var/run/docker.sock \
-        #     scribesecurity/platforms:dev-latest \
-        #     --db.local.path /db/platforms.db \
-        #     --log-level DEBUG \
-        #     bom k8s \
-        #     --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
+        run: |
+          docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
+            -v $(pwd):/db \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            scribesecurity/platforms:dev-latest \
+            --db.local.path /db/platforms.db \
+            --log-level DEBUG \
+            bom k8s \
+            --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
   
-
+      # - name: Verify K8s
+      #   run: |
           # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
           #   -v $(pwd):/db \
           #   -v /var/run/docker.sock:/var/run/docker.sock \
