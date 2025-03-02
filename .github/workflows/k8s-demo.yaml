@@ -168,7 +168,7 @@ jobs:
                 kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=IfNotPresent
     
                 # Wait for the pod to either run or terminate
-                kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ready pod/"$pod_name"-pod --timeout=300s || true
+                kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ContainersReady pod/"$pod_name"-pod --timeout=300s || true
                 kubectl describe pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}"
 
                 # /home/runner/.scribe/bin/valint verify "$target" --product-key "${{ inputs.scribe_product_name }}" --product-version  "${{ inputs.scribe_product_version }}" --scribe.client-secret "${{ secrets.SCRIBE_TOKEN }}" --bundle-branch "${{ inputs.policy_branch }}" --policy ssdf-image@discovery
