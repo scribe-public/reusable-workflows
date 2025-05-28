@@ -32,7 +32,7 @@ env:
     VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
     SCRIBE_PRODUCT_VERSION: ${{ inputs.scribe_product_version }}
     SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
-    PLATFORMS_DB_PATH: github.platforms.db
+    PLATFORMS_DB_PATH: /github/workspace/github.platforms.db
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
     LOG_LEVEL: "INFO"
