@@ -1,0 +1,16 @@
+name: Demonstrate usage of reusable GitHub Discovery workflow
+
+on:
+    workflow_dispatch:
+
+
+jobs:
+    github-discovery-demo-usage:
+        uses: scribe-security/github-discovery-demo/.github/workflows/github-discovery-demo.yaml@main
+        # with:
+            # scribe_valint_url: ${{ secrets.SCRIBE_VALINT_URL }}
+            # scribe_platforms_version: ${{ secrets.SCRIBE_PLATFORMS_VERSION }}
+            # scribe_product_version: ${{ secrets.SCRIBE_PRODUCT_VERSION }}
+        secrets:
+            SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+            GH_TOKEN: ${{ secrets.GH_TOKEN }}
