@@ -2,7 +2,7 @@ name: Github-Discovery-101
 
 env:
   GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  ORG_NAME: <your-github-org>
+  ORG_NAME: scribe-public
   SCRIBE_PRODUCT_NAME: Hello-GitHub-Discovery # this is the product name that will be presented in Scribe Hub
   SCRIBE_PRODUCT_VERSION: "1.0.1" # this is the product version that will be presented in Scribe Hub
   SCRIBE_TOKEN: ${{ secrets.SCRIBE_SECRET }}
@@ -10,10 +10,7 @@ env:
   db.local.store_policy: replace
   valint.scribe.client-secret: ${{ secrets.SCRIBE_SECRET }}
 on:
-  workflow_dispatch:
-#  pull_request:
-#  push:
-#    branches: [main]
+  workflow_run:
 
 concurrency: 
   group: build-in-${{ github.ref }}
@@ -32,7 +29,7 @@ jobs:
       - name: Find five most recently active repos
         run: |
           curl -s -H "Authorization: token $GITHUB_TOKEN" \
-          "https://api.github.com/orgs/$ORG_NAME/repos?sort=updated&per_page=5" | jq -r '.[].full_name' > repo_list.txt   
+          "https://api.github.com/orgs/$ORG_NAME/repos?sort=updated&per_page=5" | jq -r '.[].name' > repo_list.txt   
           # this API call will return 
           # a list of your 5 most recently active GitHub repo. 
           # This list will be used as the discovery scope.
@@ -54,17 +51,19 @@ jobs:
             scribe-client-secret: ${{ env.SCRIBE_TOKEN }}
             components: commits,packages,files,dep
             format: attest
+      
       - name: GitHub Discover
         uses: scribe-security/action-platforms@master
         with:
           command: discover
           platform: github
-          args:
-           --${{ env.REPO_SCOPE }}
+          args: >-
            --token=${{ env.GITHUB_TOKEN }}
            --url=https://api.github.com 
            --scope.organization=${{ env.ORG_NAME }} 
            --commit.skip 
            --scope.branch=main 
-           --workflow.skip
+           --workflow.past_days=1
+           --commits.skip
            --organization.mapping=scribe-security::$SCRIBE_PRODUCT_NAME::$SCRIBE_PRODUCT_VERSION 
+           ${{ env.REPO_SCOPE }}
