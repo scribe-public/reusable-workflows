@@ -88,6 +88,7 @@ jobs:
             with:
               command: bom
               platform: github
+              valint_args: --valint.components files
               args: >-
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --tool opengrep
