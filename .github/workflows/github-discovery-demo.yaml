@@ -91,7 +91,7 @@ jobs:
               valint_args: --valint.components files
               args: >-
                 --repository.mapping ${{ env.REPO_SCOPE }}
-                --tool opengrep
+                --hook opengrep
             
           - name: GitHub Discover
             uses: scribe-security/action-platforms@master
@@ -103,6 +103,6 @@ jobs:
                 --url=https://api.github.com 
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --organization.mapping ${{ env.ORG_SCOPE }}
-                --tool trivy_iac_and_secrets
+                --hook trivy_iac_and_secrets
 
             
