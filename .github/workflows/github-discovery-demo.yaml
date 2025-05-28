@@ -68,7 +68,7 @@ jobs:
               done < repo_list.txt
 
               while IFS= read -r repo; do
-                org_scope+="*::$repo::$SCRIBE_PRODUCT_VERSION "
+                org_scope+="${{github.repository_owner}}::$repo::$SCRIBE_PRODUCT_VERSION "
               done < repo_list.txt
               echo Repo Scope
               echo -------------
@@ -81,6 +81,7 @@ jobs:
             with:
               command: discover
               platform: github
+              log-level: DEBUG
               args: >-
                 --token=${{ secrets.GH_TOKEN }}
                 --url=https://api.github.com 
@@ -94,6 +95,7 @@ jobs:
             with:
               command: bom
               platform: github
+              log-level: DEBUG
               valint_args: --valint.components files --valint.log-level debug
               args: >-
                 --scope.organization ${{ github.repository_owner }}
