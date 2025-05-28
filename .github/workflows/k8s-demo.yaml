@@ -209,6 +209,7 @@ jobs:
             discover k8s \
             --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
             --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
+            --hook apparmor_namespace,kubescape_cluster
             
 
       #       # docker run --rm --network host -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \ -v $(pwd):/db \
@@ -235,6 +236,7 @@ jobs:
             --log-level DEBUG \
             bom k8s \
             --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
+            --hook trivy_iac_and_secrets
   
       # - name: Verify K8s
       #   run: |
