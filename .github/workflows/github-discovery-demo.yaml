@@ -74,26 +74,8 @@ jobs:
               echo -------------
               echo "REPO_SCOPE="$repo_scope >> $GITHUB_ENV
               echo "ORG_SCOPE="$org_scope >> $GITHUB_ENV
+
     
-          - name: Generate signed a deliverable SBOM
-            uses: scribe-security/action-bom-cli@master
-            with:
-              target: 'git:.'
-              product-version: ${{ inputs.scribe_product_version }} 
-              scribe-client-secret: ${{ secrets.SCRIBE_TOKEN }}
-              components: commits,packages,files,dep
-              format: attest
-    
-          - name: GitHub BOM
-            uses: scribe-security/action-platforms@master
-            with:
-              command: bom
-              platform: github
-              valint_args: --valint.components files
-              args: >-
-                --repository.mapping ${{ env.REPO_SCOPE }}
-                --hook opengrep
-            
           - name: GitHub Discover
             uses: scribe-security/action-platforms@master
             with:
@@ -105,5 +87,16 @@ jobs:
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --organization.mapping ${{ env.ORG_SCOPE }}
                 --hook trivy_iac_and_secrets
+
+
+          - name: GitHub BOM
+            uses: scribe-security/action-platforms@master
+            with:
+              command: bom
+              platform: github
+              valint_args: --valint.components files
+              args: >-
+                --repository.mapping ${{ env.REPO_SCOPE }}
+                --hook opengrep
 
             
