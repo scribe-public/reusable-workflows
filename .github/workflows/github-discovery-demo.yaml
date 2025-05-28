@@ -96,6 +96,7 @@ jobs:
               platform: github
               valint_args: --valint.components files
               args: >-
+                --scope.organization ${{ github.repository_owner }}
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --hook opengrep
 
