@@ -21,7 +21,7 @@ on:
       valint_log_level:
         description: "Valint log level"
         required: false
-        default: "info"
+        default: "debug"
         type: string
       platforms_log_level:
         description: "Platforms log level"
@@ -31,7 +31,7 @@ on:
       trace:
         description: "Enable trace logging for platforms"
         required: false
-        default: 'false'
+        default: 'true'
         type: string
     secrets:
       SCRIBE_TOKEN:
