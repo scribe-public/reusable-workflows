@@ -99,7 +99,6 @@ env:
     VALINT_SCRIBE_ENABLE: true 
     DOCKER_DRIVER: overlay2
     DOCKER_CONFIG: ${{ github.workspace }}/.docker
-    DEBUG: false
     K8S_URL: "Not set"
     NAMESPACE: "default"
 
