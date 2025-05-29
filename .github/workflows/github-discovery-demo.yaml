@@ -18,7 +18,21 @@ on:
         required: false
         type: string
         default: "1.0.0"
-
+      valint-log-level:
+        description: "Valint log level"
+        required: false
+        default: "info"
+        type: string
+      platforms-log-level:
+        description: "Platforms log level"
+        required: false
+        default: "INFO"
+        type: string
+      trace:
+        description: "Enable trace logging for platforms"
+        required: false
+        default: 'false'
+        type: string
     secrets:
       SCRIBE_TOKEN:
         description: "Scribe token"
@@ -32,11 +46,12 @@ env:
     VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
     SCRIBE_PRODUCT_VERSION: ${{ inputs.scribe_product_version }}
     SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
-    PLATFORMS_DB_PATH: /github/workspace/github.platforms.db
+    PLATFORMS_DB_PATH: github_new.platforms.db
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
-    LOG_LEVEL: "INFO"
-    VALINT_LOG_LEVEL: "info"
+    LOG_LEVEL: ${{ inputs.platforms_log_level }}
+    VALINT_LOG_LEVEL: ${{ inputs.valint_log_level }}
+    DEBUG: ${{ inputs.trace }}
     VALINT_DISABLE_EVIDENCE_CACHE: false
     VALINT_SCRIBE_ENABLE: true 
     DOCKER_DRIVER: overlay2
@@ -81,7 +96,6 @@ jobs:
             with:
               command: discover
               platform: github
-              log-level: DEBUG
               args: >-
                 --token=${{ secrets.GH_TOKEN }}
                 --url=https://api.github.com 
@@ -89,17 +103,22 @@ jobs:
                 --organization.mapping ${{ env.ORG_SCOPE }}
                 --hook trivy_iac_and_secrets
 
+          - name: INFO db
+            run: |
+              echo "PLATFORMS_DB_PATH=${{ env.PLATFORMS_DB_PATH }}"
+              pwd
+              ls -lh
 
           - name: GitHub BOM
             uses: scribe-security/action-platforms@master
             with:
               command: bom
               platform: github
-              log-level: DEBUG
               valint_args: --valint.components files --valint.log-level debug
               args: >-
-                --scope.organization ${{ github.repository_owner }}
+                --scope.organization='*'
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --hook opengrep
 
+# --scope.organization ${{ github.repository_owner }}
             
