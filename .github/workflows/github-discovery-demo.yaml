@@ -77,7 +77,7 @@ jobs:
 
     
           - name: GitHub Discover
-            uses: scribe-security/action-platforms@master
+            uses: scribe-security/action-platforms@dev
             with:
               command: discover
               platform: github
@@ -96,14 +96,14 @@ jobs:
                   ls -ls evidence/github
 
           - name: GitHub BOM
-            uses: scribe-security/action-platforms@master
+            uses: scribe-security/action-platforms@dev
             with:
               command: bom
               platform: github
               log-level: DEBUG
               valint_args: --valint.components files --valint.log-level debug
               args: >-
-                --scope.organization ${{ github.repository_owner }}
+                --scope.organization *${{ github.repository_owner }}
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --hook opengrep
 
