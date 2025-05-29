@@ -93,7 +93,7 @@ jobs:
             run: | 
                   pwd
                   ls -la
-                  ls -ls evidence/github
+                  ls -ls evidence/github || true
 
           - name: GitHub BOM
             uses: scribe-security/action-platforms@dev
