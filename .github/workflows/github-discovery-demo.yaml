@@ -116,12 +116,13 @@ jobs:
             with:
               command: bom
               platform: github
-              valint_args: --valint.components files --valint.log-level debug
               args: >-
                 --scope.organization='*'
-                --repository.mapping ${{ env.REPO_SCOPE }}
+                --repository.mapping='*::test_mikey::v1'
                 --hook opengrep
             env:
               PLATFORMS_DB_PATH: github_new.platforms.db
+
+# valint_args: --valint.components files --valint.log-level debug
 # --scope.organization ${{ github.repository_owner }}
             
