@@ -112,6 +112,7 @@ jobs:
           command: bom
           platform: github
           args: >-
+            --organization.mapping=*::test_mikey::v1
             --repository.mapping=*::test_mikey::v1
             --hook opengrep
         env:
