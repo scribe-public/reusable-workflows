@@ -126,9 +126,10 @@ jobs:
           - name: Artifacty db
             uses: actions/upload-artifact@v3
             with:
-              name:  github_new.platforms.db
-
+              name: github-demo-db
+              path:  github_new.platforms.db
               
+
 #                 --scope.organization='*'
 # valint_args: --valint.components files --valint.log-level debug
 # --scope.organization ${{ github.repository_owner }}
