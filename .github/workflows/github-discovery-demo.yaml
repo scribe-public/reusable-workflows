@@ -105,7 +105,7 @@ jobs:
               command: bom
               platform: github
               args: >-
-                --organization.mapping ${{ env.ORG_SCOPE }}
+                --scope.organization ${{ github.repository_owner }}
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --hook opengrep
 
