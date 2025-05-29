@@ -114,7 +114,7 @@ jobs:
           args: >-
             --organization.mapping=*::test_mikey::v1
             --repository.mapping=*::test_mikey::v1
-            --hook opengrep
+        # --hook opengrep
         env:
           PLATFORMS_DB_PATH: ${{ env.PLATFORMS_DB_PATH }}
           LOG_LEVEL: ${{ env.LOG_LEVEL }}
