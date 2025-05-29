@@ -100,10 +100,8 @@ jobs:
             with:
               command: bom
               platform: github
-              log-level: DEBUG
-              valint_args: --valint.components files --valint.log-level debug
               args: >-
-                --scope.organization *${{ github.repository_owner }}
+                --organization.mapping ${{ env.ORG_SCOPE }}
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --hook opengrep
 
