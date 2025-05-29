@@ -10,7 +10,8 @@ env:
   db.local.store_policy: replace
   valint.scribe.client-secret: ${{ secrets.SCRIBE_SECRET }}
 on:
-  workflow_run:
+  workflow_dispatch:
+
 
 concurrency: 
   group: build-in-${{ github.ref }}
