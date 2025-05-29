@@ -42,95 +42,87 @@ on:
         required: true
 
 env:
-    PLATFORMS_VERSION: ${{ inputs.scribe_platforms_version }}
-    VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
-    SCRIBE_PRODUCT_VERSION: ${{ inputs.scribe_product_version }}
-    SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
-    PLATFORMS_DB_PATH: github_new.platforms.db
-    VALINT_CONTEXT_TYPE: "github"
-    VALINT_OUTPUT_DIRECTORY: evidence/github
-    LOG_LEVEL: ${{ inputs.platforms_log_level }}
-    VALINT_LOG_LEVEL: ${{ inputs.valint_log_level }}
-    DEBUG: ${{ inputs.trace }}
-    VALINT_DISABLE_EVIDENCE_CACHE: false
-    VALINT_SCRIBE_ENABLE: true 
-    DOCKER_DRIVER: overlay2
+  PLATFORMS_VERSION: ${{ inputs.scribe_platforms_version }}
+  VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
+  SCRIBE_PRODUCT_VERSION: ${{ inputs.scribe_product_version }}
+  SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+  PLATFORMS_DB_PATH: github_new2.platforms.db
+  VALINT_CONTEXT_TYPE: "github"
+  VALINT_OUTPUT_DIRECTORY: evidence/github
+  LOG_LEVEL: ${{ inputs.platforms_log_level }}
+  VALINT_LOG_LEVEL: ${{ inputs.valint_log_level }}
+  DEBUG: ${{ inputs.trace }}
+  VALINT_DISABLE_EVIDENCE_CACHE: false
+  VALINT_SCRIBE_ENABLE: true 
+  DOCKER_DRIVER: overlay2
 
 jobs:
-    github-discovery:
-        runs-on: ubuntu-latest
-        permissions:
-          contents: read
-          id-token: write
+  github-discovery:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
-        steps:
-          - name: Checkout repository
-            uses: actions/checkout@v3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-          - name: Find five most recently active repos
-            run: |
-              curl -s -H "Authorization: token ${{ secrets.GH_TOKEN}}" \
-              "https://api.github.com/orgs/${{ github.repository_owner}}/repos?sort=updated&per_page=5" | jq -r '.[].name' > repo_list.txt   
-              # this API call will return 
-              # a list of your 5 most recently active GitHub repo. 
-              # This list will be used as the discovery scope.
-              cat repo_list.txt
-              repo_scope=" "
-              org_scope=" "
-              while IFS= read -r repo; do
-                repo_scope+="$repo::$repo::$SCRIBE_PRODUCT_VERSION "
-              done < repo_list.txt
+      - name: Find five most recently active repos
+        run: |
+          curl -s -H "Authorization: token ${{ secrets.GH_TOKEN}}" \
+            "https://api.github.com/orgs/${{ github.repository_owner}}/repos?sort=updated&per_page=5" | jq -r '.[].name' > repo_list.txt   
 
-              while IFS= read -r repo; do
-                org_scope+="${{github.repository_owner}}::$repo::$SCRIBE_PRODUCT_VERSION "
-              done < repo_list.txt
-              echo Repo Scope
-              echo -------------
-              echo "REPO_SCOPE="$repo_scope >> $GITHUB_ENV
-              echo "ORG_SCOPE="$org_scope >> $GITHUB_ENV
+          repo_scope=""
+          org_scope=""
+          while IFS= read -r repo; do
+            repo_scope+="$repo::$repo::$SCRIBE_PRODUCT_VERSION "
+            org_scope+="${{ github.repository_owner }}::$repo::$SCRIBE_PRODUCT_VERSION "
+          done < repo_list.txt
 
-    
-          - name: GitHub Discover
-            uses: scribe-security/action-platforms@master
-            with:
-              command: discover
-              platform: github
-              args: >-
-                --token=${{ secrets.GH_TOKEN }}
-                --url=https://api.github.com 
-                --repository.mapping ${{ env.REPO_SCOPE }}
-                --organization.mapping ${{ env.ORG_SCOPE }}
-                --hook trivy_iac_and_secrets
-            env:
-              PLATFORMS_DB_PATH: github_new.platforms.db
+          echo "REPO_SCOPE=$repo_scope" >> $GITHUB_ENV
+          echo "ORG_SCOPE=$org_scope" >> $GITHUB_ENV
 
-          - name: INFO db
-            run: |
-              echo "GOT PLATFORMS_DB_PATH=${{ env.PLATFORMS_DB_PATH }}"
-              pwd
-              ls -lh
-              find ~/ -name "*.db" || true
+      - name: GitHub Discover
+        uses: scribe-security/action-platforms@master
+        with:
+          command: discover
+          platform: github
+          args: >-
+            --token=${{ secrets.GH_TOKEN }}
+            --url=https://api.github.com 
+            --repository.mapping ${{ env.REPO_SCOPE }}
+            --organization.mapping ${{ env.ORG_SCOPE }}
+            --hook trivy_iac_and_secrets
+        env:
+          PLATFORMS_DB_PATH: ${{ env.PLATFORMS_DB_PATH }}
+          LOG_LEVEL: ${{ env.LOG_LEVEL }}
+          VALINT_LOG_LEVEL: ${{ env.VALINT_LOG_LEVEL }}
+          DEBUG: ${{ env.DEBUG }}
 
-          - name: GitHub BOM
-            uses: scribe-security/action-platforms@master
-            with:
-              command: bom
-              platform: github
-              args: >-
-                --repository.mapping='*::test_mikey::v1'
-                --hook opengrep
-            env:
-              PLATFORMS_DB_PATH: github_new.platforms.db
+      - name: Show DB info
+        run: |
+          echo "GOT PLATFORMS_DB_PATH=${{ env.PLATFORMS_DB_PATH }}"
+          pwd
+          ls -lh
+          find ~/ -name "*.db" || true
+
+      - name: GitHub BOM
+        uses: scribe-security/action-platforms@master
+        with:
+          command: bom
+          platform: github
+          args: >-
+            --repository.mapping='*::test_mikey::v1'
+            --hook opengrep
+        env:
+          PLATFORMS_DB_PATH: ${{ env.PLATFORMS_DB_PATH }}
+          LOG_LEVEL: ${{ env.LOG_LEVEL }}
+          VALINT_LOG_LEVEL: ${{ env.VALINT_LOG_LEVEL }}
+          DEBUG: ${{ env.DEBUG }}
 
 
-          - name: Artifacty db
-            uses: actions/upload-artifact@v3
-            with:
-              name: github-demo-db
-              path:  github_new.platforms.db
-              
-
-#                 --scope.organization='*'
-# valint_args: --valint.components files --valint.log-level debug
-# --scope.organization ${{ github.repository_owner }}
-            
+      - name: Upload discovery DB as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-demo-db
+          path: github_new2.platforms.db
