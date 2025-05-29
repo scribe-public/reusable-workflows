@@ -18,6 +18,11 @@ on:
         required: false
         type: string
         default: "1.0.0"
+      number_of_repos:
+        description: "Number of repositories to discover"
+        required: false
+        type: number
+        default: 5
 
     secrets:
       SCRIBE_TOKEN:
@@ -56,7 +61,7 @@ jobs:
           - name: Find five most recently active repos
             run: |
               curl -s -H "Authorization: token ${{ secrets.GH_TOKEN}}" \
-              "https://api.github.com/orgs/${{ github.repository_owner}}/repos?sort=updated&per_page=1" | jq -r '.[].name' > repo_list.txt   
+              "https://api.github.com/orgs/${{ github.repository_owner}}/repos?sort=updated&per_page=${{inputs.number_of_repos}}" | jq -r '.[].name' > repo_list.txt   
               # this API call will return 
               # a list of your 5 most recently active GitHub repo. 
               # This list will be used as the discovery scope.
