@@ -1,4 +1,4 @@
-name: Demonstrate usage of reusable GitHub Discovery workflow
+name: DEV Discovery Github
 
 on:
     workflow_dispatch:
