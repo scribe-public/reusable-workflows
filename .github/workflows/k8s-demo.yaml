@@ -58,6 +58,21 @@ on:
         required: false
         default: "docker.io"
         type: string
+      valint-log-level:
+        description: "Valint log level"
+        required: false
+        default: "info"
+        type: string
+      platforms-log-level:
+        description: "Platforms log level"
+        required: false
+        default: "INFO"
+        type: string
+      trace:
+        description: "Enable trace logging for platforms"
+        required: false
+        default: 'false'
+        type: string
     secrets:
       SCRIBE_TOKEN:
         description: "Scribe token"
@@ -77,8 +92,9 @@ env:
     VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
-    LOG_LEVEL: "INFO"
-    VALINT_LOG_LEVEL: "info"
+    LOG_LEVEL: ${{ inputs.platforms_log_level }}
+    VALINT_LOG_LEVEL: ${{ inputs.valint_log_level }}
+    DEBUG: ${{ inputs.trace }}
     VALINT_DISABLE_EVIDENCE_CACHE: false
     VALINT_SCRIBE_ENABLE: true 
     DOCKER_DRIVER: overlay2
