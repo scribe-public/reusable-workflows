@@ -121,7 +121,7 @@ jobs:
                 --scope.organization='*'
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --hook opengrep
-              env:
-                PLATFORMS_DB_PATH: github_new.platforms.db
+            env:
+              PLATFORMS_DB_PATH: github_new.platforms.db
 # --scope.organization ${{ github.repository_owner }}
             
