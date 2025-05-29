@@ -123,6 +123,12 @@ jobs:
             env:
               PLATFORMS_DB_PATH: github_new.platforms.db
 
+
+          - name: Artifacty db
+            uses: actions/upload-artifact@v3
+            with:
+              name:  github_new.platforms.db
+
 # valint_args: --valint.components files --valint.log-level debug
 # --scope.organization ${{ github.repository_owner }}
             
