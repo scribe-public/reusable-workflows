@@ -117,7 +117,6 @@ jobs:
               command: bom
               platform: github
               args: >-
-                --scope.organization='*'
                 --repository.mapping='*::test_mikey::v1'
                 --hook opengrep
             env:
@@ -129,6 +128,8 @@ jobs:
             with:
               name:  github_new.platforms.db
 
+              
+#                 --scope.organization='*'
 # valint_args: --valint.components files --valint.log-level debug
 # --scope.organization ${{ github.repository_owner }}
             
