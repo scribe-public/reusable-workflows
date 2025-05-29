@@ -18,12 +18,12 @@ on:
         required: false
         type: string
         default: "1.0.0"
-      valint-log-level:
+      valint_log_level:
         description: "Valint log level"
         required: false
         default: "info"
         type: string
-      platforms-log-level:
+      platforms_log_level:
         description: "Platforms log level"
         required: false
         default: "INFO"
@@ -55,7 +55,6 @@ env:
     VALINT_DISABLE_EVIDENCE_CACHE: false
     VALINT_SCRIBE_ENABLE: true 
     DOCKER_DRIVER: overlay2
-    DEBUG: true
 
 jobs:
     github-discovery:
