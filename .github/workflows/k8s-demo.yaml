@@ -241,6 +241,7 @@ jobs:
             --db.local.path /db/platforms.db \
             --log-level DEBUG \
             bom k8s \
+            --instance minikube \
             --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
             ${{ inputs.k8s_bom_args }} \
 
@@ -253,6 +254,7 @@ jobs:
           #   scribesecurity/platforms:${{ env.PLATFORMS_VERSION }} \
           #   --db.local.path /db/platforms.db \
           #   verify k8s \
+          #   --instance minikube \
           #   --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
 
         
