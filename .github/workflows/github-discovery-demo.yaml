@@ -84,7 +84,6 @@ jobs:
               log-level: DEBUG
               args: >-
                 --token=${{ secrets.GH_TOKEN }}
-                --url=https://api.github.com 
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --organization.mapping ${{ env.ORG_SCOPE }}
                 --hook trivy_iac_and_secrets

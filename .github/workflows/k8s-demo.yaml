@@ -212,6 +212,7 @@ jobs:
             --db.local.path /db/platforms.db \
             --log-level DEBUG \
             discover k8s \
+            --instance minikube \
             --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
             --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
             ${{ inputs.k8s_discovery_args }} \
