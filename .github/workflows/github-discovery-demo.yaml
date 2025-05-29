@@ -83,7 +83,7 @@ jobs:
           echo "ORG_SCOPE=$org_scope" >> $GITHUB_ENV
 
       - name: GitHub Discover
-        uses: scribe-security/action-platforms@master
+        uses: scribe-security/action-platforms@dev
         with:
           command: discover
           platform: github
@@ -107,7 +107,7 @@ jobs:
           find ~/ -name "*.db" || true
 
       - name: GitHub BOM
-        uses: scribe-security/action-platforms@master
+        uses: scribe-security/action-platforms@dev
         with:
           command: bom
           platform: github

@@ -87,11 +87,10 @@ on:
 
 
 env:
-    PLATFORMS_VERSION: "latest"
-    PLATFORMS_DB_PATH: github.platforms.db
+    PLATFORMS_VERSION: "dev-latest"
     VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
     VALINT_CONTEXT_TYPE: "github"
-    VALINT_OUTPUT_DIRECTORY: evidence/github
+    VALINT_OUTPUT_DIRECTORY: evidence/k8s
     LOG_LEVEL: ${{ inputs.platforms_log_level }}
     VALINT_LOG_LEVEL: ${{ inputs.valint_log_level }}
     DEBUG: ${{ inputs.trace }}
