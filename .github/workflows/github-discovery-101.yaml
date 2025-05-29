@@ -9,8 +9,9 @@ env:
   LOG_LEVEL: DEBUG
   db.local.store_policy: replace
   valint.scribe.client-secret: ${{ secrets.SCRIBE_SECRET }}
-on:
-  workflow_run:
+  
+# on:
+#   workflow_run:
 
 concurrency: 
   group: build-in-${{ github.ref }}
