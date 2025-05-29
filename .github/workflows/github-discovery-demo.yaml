@@ -101,12 +101,15 @@ jobs:
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --organization.mapping ${{ env.ORG_SCOPE }}
                 --hook trivy_iac_and_secrets
+            env:
+              PLATFORMS_DB_PATH: github_new.platforms.db
 
           - name: INFO db
             run: |
-              echo "PLATFORMS_DB_PATH=${{ env.PLATFORMS_DB_PATH }}"
+              echo "GOT PLATFORMS_DB_PATH=${{ env.PLATFORMS_DB_PATH }}"
               pwd
               ls -lh
+              find ~/ -name "*.db" || true
 
           - name: GitHub BOM
             uses: scribe-security/action-platforms@master
@@ -118,6 +121,7 @@ jobs:
                 --scope.organization='*'
                 --repository.mapping ${{ env.REPO_SCOPE }}
                 --hook opengrep
-
+              env:
+                PLATFORMS_DB_PATH: github_new.platforms.db
 # --scope.organization ${{ github.repository_owner }}
             
