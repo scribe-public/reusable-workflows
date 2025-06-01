@@ -114,9 +114,8 @@ jobs:
           args: >-
             --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
             --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-            --organization.policy ssdf-org@discovery
+            --initiative ssdf@v2
             --org-policy-skip-aggregate
-            --repository.policy ssdf-repo@discovery
             --repo-policy-skip-aggregate
 
       - name: Login to DockerHub
@@ -144,4 +143,4 @@ jobs:
           product-version: ${{ inputs.scribe_product_version }}
           scribe-client-secret: ${{ secrets.SCRIBE_TOKEN }}
           bundle-branch: ${{ inputs.policy_branch }}
-          policy: ssdf-image@discovery
+          initiative: ssdf@v2
