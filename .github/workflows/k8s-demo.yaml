@@ -156,53 +156,63 @@ jobs:
           echo "NAMESPACE=$(echo \"${{ inputs.scribe_product_name }}\" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
 
-      - name: Deploy image
+      - name: Deploy image by digest
         run: |
-            
-            set -x
-            eval $(minikube docker-env)
-            kubectl create namespace ${{env.NAMESPACE}} || true
-            targets="${{ inputs.targets }}"
-            IFS=',' read -r -a target_array <<< "$targets"
-
-            for target in "${target_array[@]}"; do
-              target=$(echo "$target" | xargs)           
-              
-              if [ -n "$target" ]; then
-                echo "Deploying image: $target"
-                docker pull "$target"
-                docker images
-                minikube image load "$target"
-                minikube image ls
-                # Replace invalid characters for pod name and deploy
-                pod_name=$(echo "$target" | tr ':/.' '-')
-                kubectl run "$pod_name"-pod --image="$target" --namespace="${{ env.NAMESPACE }}" --image-pull-policy=IfNotPresent
-    
-                # Wait for the pod to either run or terminate
-                kubectl wait --namespace="${{ env.NAMESPACE }}" --for=condition=ContainersReady pod/"$pod_name"-pod --timeout=300s || true
-                kubectl describe pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}"
-              
-                # Check the status of the pod
-                pod_status=$(kubectl get pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}" --output=jsonpath='{.status.phase}')
-                
-                if [ "$pod_status" = "Failed" ] || [ "$pod_status" = "Succeeded" ]; then
-                    echo "Pod $pod_name-pod terminated with status: $pod_status"
-                    exit 1
-                fi
-              fi
-            done
-
-      # Commented out due to networking issues    
-      # - name: Discover
-      #   uses: scribe-security/action-platforms@master
-      #   with:
-      #     command: discover
-      #     platform: k8s
-      #     args: >-
-      #       --token ${{ env.K8S_TOKEN}}
-      #       --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
-      #       --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
-
+          set -x
+          eval $(minikube docker-env)
+          kubectl create namespace ${{ env.NAMESPACE }} || true
+      
+          IFS=',' read -r -a targets <<< "${{ inputs.targets }}"
+      
+          for target in "${targets[@]}"; do
+            target=$(echo "$target" | xargs)           
+            if [ -z "$target" ]; then continue; fi
+      
+            echo "Fetching digest for: $target"
+      
+            docker pull "$target"
+      
+            # Extract repo digest (e.g., myrepo/myimage@sha256:...)
+            digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$target")
+            if [ -z "$digest" ]; then
+              echo "ERROR: no RepoDigest found for $target"
+              exit 1
+            fi
+            echo "Resolved digest: $digest"
+      
+            minikube image load "$digest"
+      
+            # safe pod name
+            pod_name=$(echo "$digest" | tr ':/.' '-')
+      
+            kubectl run "$pod_name"-pod \
+              --image="$digest" \
+              --namespace="${{ env.NAMESPACE }}" \
+              --image-pull-policy=IfNotPresent
+      
+            kubectl wait --namespace="${{ env.NAMESPACE }}" \
+              --for=condition=ContainersReady pod/"$pod_name"-pod --timeout=300s || true
+            kubectl describe pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}"
+      
+            pod_status=$(kubectl get pod "$pod_name"-pod --namespace="${{ env.NAMESPACE }}" \
+              --output=jsonpath='{.status.phase}')
+            if [[ "$pod_status" == "Failed" || "$pod_status" == "Succeeded" ]]; then
+              echo "Pod $pod_name-pod terminated with status: $pod_status"
+              exit 1
+            fi
+          done
+      
+            # Commented out due to networking issues    
+            # - name: Discover
+            #   uses: scribe-security/action-platforms@master
+            #   with:
+            #     command: discover
+            #     platform: k8s
+            #     args: >-
+            #       --token ${{ env.K8S_TOKEN}}
+            #       --namespace.mapping ${{env.NAMESPACE}}::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
+            #       --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} 
+      
       - name: Discover K8s
         run: | 
           set -x
