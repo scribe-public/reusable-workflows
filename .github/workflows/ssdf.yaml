@@ -85,7 +85,7 @@ jobs:
             fi
 
       - name: Discover Github
-        uses: scribe-security/action-platforms@dev
+        uses: scribe-security/action-platforms@master
         with:
           command: discover
           platform: github
@@ -96,7 +96,7 @@ jobs:
             
 
       - name: Evidence Github
-        uses: scribe-security/action-platforms@dev
+        uses: scribe-security/action-platforms@master
         with:
           command: evidence
           platform: github
@@ -106,7 +106,7 @@ jobs:
             ${{ inputs.evidence_args }}
 
       - name: Verify Github
-        uses: scribe-security/action-platforms@dev
+        uses: scribe-security/action-platforms@master
         with:
           command: verify
           platform: github

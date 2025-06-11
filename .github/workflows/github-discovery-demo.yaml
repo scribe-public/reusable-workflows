@@ -1,0 +1,112 @@
+name: Github Discovery and Verification Demo
+
+on:
+  workflow_call:
+    inputs:
+      scribe_valint_url:
+        description: "Scribe Valint URL"
+        required: false
+        type: string
+        default: "https://api.scribesecurity.com"
+      scribe_platforms_version: 
+        description: "Scribe Platforms Version"
+        required: false
+        type: string
+        default: "latest"
+      scribe_product_version:
+        description: "Scribe Product Version"
+        required: false
+        type: string
+        default: "1.0.0"
+      number_of_repos:
+        description: "Number of repositories to discover"
+        required: false
+        type: number
+        default: 5
+
+    secrets:
+      SCRIBE_TOKEN:
+        description: "Scribe token"
+        required: true
+      GH_TOKEN:
+        description: "GitHub token with org, repo and workflows read permissions"
+        required: true
+
+env:
+    # PLATFORMS_VERSION: ${{ inputs.scribe_platforms_version }}
+    VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
+    SCRIBE_PRODUCT_VERSION: ${{ inputs.scribe_product_version }}
+    SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
+    # PLATFORMS_DB_PATH: github.platforms.db
+    # VALINT_CONTEXT_TYPE: "github"
+    # VALINT_OUTPUT_DIRECTORY: evidence/github
+    LOG_LEVEL: "DEBUG"
+    VALINT_LOG_LEVEL: "debug"
+    # VALINT_DISABLE_EVIDENCE_CACHE: false
+    # VALINT_SCRIBE_ENABLE: true 
+    # DOCKER_DRIVER: overlay2
+    DEBUG: true
+
+jobs:
+    github-discovery:
+        runs-on: ubuntu-latest
+        permissions:
+          contents: read
+          id-token: write
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v3
+
+          - name: Find five most recently active repos
+            run: |
+              curl -s -H "Authorization: token ${{ secrets.GH_TOKEN}}" \
+              "https://api.github.com/orgs/${{ github.repository_owner}}/repos?sort=updated&per_page=${{inputs.number_of_repos}}" | jq -r '.[].name' > repo_list.txt   
+              # this API call will return 
+              # a list of your 5 most recently active GitHub repo. 
+              # This list will be used as the discovery scope.
+              cat repo_list.txt
+              repo_scope=" "
+              org_scope=" "
+              while IFS= read -r repo; do
+                repo_scope+="$repo::$repo::$SCRIBE_PRODUCT_VERSION "
+              done < repo_list.txt
+
+              while IFS= read -r repo; do
+                org_scope+="${{github.repository_owner}}::$repo::$SCRIBE_PRODUCT_VERSION "
+              done < repo_list.txt
+              echo Repo Scope
+              echo -------------
+              echo "REPO_SCOPE="$repo_scope >> $GITHUB_ENV
+              echo "ORG_SCOPE="$org_scope >> $GITHUB_ENV
+
+    
+          - name: GitHub Discover
+            uses: scribe-security/action-platforms@dev
+            with:
+              command: discover
+              platform: github
+              log-level: DEBUG
+              args: >-
+                --token=${{ secrets.GH_TOKEN }}
+                --repository.mapping ${{ env.REPO_SCOPE }}
+                --organization.mapping ${{ env.ORG_SCOPE }}
+                --hook trivy_iac_and_secrets
+
+          - name: Debug Info
+            run: | 
+                  pwd
+                  ls -la
+                  ls -ls evidence/github || true
+
+          - name: GitHub BOM
+            uses: scribe-security/action-platforms@dev
+            with:
+              command: bom
+              platform: github
+              args: >-
+                --scope.organization ${{ github.repository_owner }}
+                --repository.mapping ${{ env.REPO_SCOPE }}
+                --hook opengrep
+
+            

@@ -1,0 +1,70 @@
+name: Github-Discovery-101
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  ORG_NAME: scribe-public
+  SCRIBE_PRODUCT_NAME: Hello-GitHub-Discovery # this is the product name that will be presented in Scribe Hub
+  SCRIBE_PRODUCT_VERSION: "1.0.1" # this is the product version that will be presented in Scribe Hub
+  SCRIBE_TOKEN: ${{ secrets.SCRIBE_SECRET }}
+  LOG_LEVEL: DEBUG
+  db.local.store_policy: replace
+  valint.scribe.client-secret: ${{ secrets.SCRIBE_SECRET }}
+on:
+  workflow_dispatch:
+
+
+concurrency: 
+  group: build-in-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  GitHub-Discovery:
+    runs-on: ubuntu-latest
+    permissions:
+        contents: read
+        id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+#    
+      - name: Find five most recently active repos
+        run: |
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/orgs/$ORG_NAME/repos?sort=updated&per_page=5" | jq -r '.[].name' > repo_list.txt   
+          # this API call will return 
+          # a list of your 5 most recently active GitHub repo. 
+          # This list will be used as the discovery scope.
+          cat repo_list.txt
+          repo_scope="--repository.mapping "
+          while IFS= read -r repo; do
+          repo_scope+="$repo::$SCRIBE_PRODUCT_NAME::$SCRIBE_PRODUCT_VERSION "
+          done < repo_list.txt
+          echo Repo Scope
+          echo -------------
+          echo "REPO_SCOPE="$repo_scope >> $GITHUB_ENV
+          
+      - name: Generate signed a deliverable SBOM
+        uses: scribe-security/action-bom-cli@master
+        with:
+            target: 'git:.'
+            product-key: ${{ env.SCRIBE_PRODUCT_NAME }}
+            product-version: ${{env.SCRIBE_PRODUCT_VERSION}} 
+            scribe-client-secret: ${{ env.SCRIBE_TOKEN }}
+            components: commits,packages,files,dep
+            format: attest
+      
+      - name: GitHub Discover
+        uses: scribe-security/action-platforms@master
+        with:
+          command: discover
+          platform: github
+          args: >-
+           --token=${{ env.GITHUB_TOKEN }}
+           --url=https://api.github.com 
+           --scope.organization=${{ env.ORG_NAME }} 
+           --commit.skip 
+           --scope.branch=main 
+           --workflow.past_days=1
+           --commits.skip
+           --organization.mapping=scribe-security::$SCRIBE_PRODUCT_NAME::$SCRIBE_PRODUCT_VERSION 
+           ${{ env.REPO_SCOPE }}

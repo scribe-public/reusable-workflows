@@ -3,6 +3,11 @@ name: Github Discovery and Verification Demo
 on:
   workflow_call:
     inputs:
+      scribe_valint_url:
+        description: "Scribe Valint URL"
+        required: false
+        type: string
+        default: "https://api.scribesecurity.com"
       scribe_product_name:
         description: "Scribe Product Name"
         required: true
@@ -46,7 +51,7 @@ on:
 env:
     PLATFORMS_VERSION: "dev-latest"
     PLATFORMS_DB_PATH: github.platforms.db
-    VALINT_SCRIBE_URL: https://api.scribesecurity.com
+    VALINT_SCRIBE_URL: ${{ inputs.scribe_valint_url }}
     VALINT_CONTEXT_TYPE: "github"
     VALINT_OUTPUT_DIRECTORY: evidence/github
     LOG_LEVEL: "INFO"
@@ -60,7 +65,7 @@ jobs:
   ssdf_evaluation:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GITHUB_EXTERNAL_TOKEN: ${{ secrets.GH_TOKEN }}
       SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
 
     steps:
@@ -73,20 +78,11 @@ jobs:
           command: discover
           platform: github
           args: >-
-            --scope.organization *${{ github.repository_owner}}
-            --scope.repository *${{ github.repository}}
-            ${{ inputs.discover_args }}
-            
-
-      - name: Evidence Github
-        uses: scribe-security/action-platforms@dev
-        with:
-          command: evidence
-          platform: github
-          args: >-
+            --token ${{ secrets.GH_TOKEN}}
             --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
             --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-            ${{ inputs.evidence_args }}
+            ${{ inputs.discover_args }}
+            
 
       - name: Verify Github
         uses: scribe-security/action-platforms@dev
