@@ -183,7 +183,7 @@ jobs:
             minikube image load "$digest"
       
             # safe pod name
-            pod_name=$(echo "$digest" | tr ':/.' '-')
+            pod_name=$(echo "$target" | tr ':/.' '-')
       
             kubectl run "$pod_name"-pod \
               --image="$digest" \
