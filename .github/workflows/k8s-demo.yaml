@@ -250,7 +250,6 @@ jobs:
             -e DOCKER_DRIVER=overlay2 -e DOCKER_CONFIG=/dockerconfig \
             -v $(pwd):/db \
             -v ${{ github.workspace }}/.docker:/dockerconfig \
-            -v /var/run/docker.sock:/var/run/docker.sock \
             -v /home/runner/work/demo-pipeline/demo-pipeline/.docker:/root/.docker \
             scribesecurity/platforms:${{ env.PLATFORMS_VERSION }} \
             --db.local.path /db/platforms.db \
