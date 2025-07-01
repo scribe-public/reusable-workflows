@@ -231,18 +231,6 @@ jobs:
             ${{ inputs.k8s_discovery_args }} \
             
 
-      #       # docker run --rm --network host -e DEBUG=$DEBUG -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \ -v $(pwd):/db \
-      #       #   scribesecurity/platforms:${{ env.PLATFORMS_VERSION }} \
-      #       #   --db.local.path /db/platforms.db \
-      #       #   evidence \
-      #       #   --valint.scribe.enable \
-      #       #   --valint.scribe.client-secret ${{ secrets.SCRIBE_TOKEN }} \
-      #       #   k8s \
-      #       #   --scope.namespace ${{env.NAMESPACE}} \
-      #       #   --namespace.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
-      #       #   --pod.mapping *::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} \
-      #       #   || true
-
       - name: BOM K8s
         if: ${{ inputs.sbom == true }}
         run: |
@@ -258,24 +246,6 @@ jobs:
             --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
             ${{ inputs.k8s_bom_args }} \
       
-      # Working:
-      # - name: BOM K8s
-      #   if: ${{ inputs.sbom == true }}
-      #   run: |
-      #     docker run --rm --network host -e DEBUG=$DEBUG -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN -e VALINT_SCRIBE_URL=$VALINT_SCRIBE_URL \
-      #       -e DOCKER_DRIVER=overlay2 -e DOCKER_CONFIG=/dockerconfig \
-      #       -v $(pwd):/db \
-      #       -v ${{ github.workspace }}/.docker:/dockerconfig \
-      #       -v /var/run/docker.sock:/var/run/docker.sock \
-      #       -v /home/runner/work/demo-pipeline/demo-pipeline/.docker:/root/.docker \
-      #       scribesecurity/platforms:${{ env.PLATFORMS_VERSION }} \
-      #       --db.local.path /db/platforms.db \
-      #       --log-level DEBUG \
-      #       bom k8s \
-      #       --instance minikube \
-      #       --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true \
-      #       ${{ inputs.k8s_bom_args }} \
-
       # - name: Verify K8s
       #   run: |
           # docker run --rm --network host -e DEBUG=$DEBUG -e K8S_URL=$K8S_URL -e K8S_TOKEN=$K8S_TOKEN -e SCRIBE_TOKEN=$SCRIBE_TOKEN \
@@ -287,10 +257,6 @@ jobs:
           #   --instance minikube \
           #   --image.mapping ${{env.NAMESPACE}}::*::*::${{inputs.scribe_product_name}}::${{ inputs.scribe_product_version }} || true
 
-        
-      # - name: Upload Artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #       path: platforms.db
+
   
 
