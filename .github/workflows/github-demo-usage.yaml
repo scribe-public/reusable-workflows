@@ -13,6 +13,7 @@ jobs:
     with:
         scribe_product_name: "Test-Product"
         scribe_product_version: "Some-Version"
+        scribe_valint_url: "https://attstore.scribesecurity.com/"
     secrets: 
         SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
