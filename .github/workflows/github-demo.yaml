@@ -72,6 +72,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get Repo Name
+        run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
       - name: Discover Github
         uses: scribe-security/action-platforms@dev
         with:
@@ -80,7 +83,7 @@ jobs:
           args: >-
             --token ${{ secrets.GH_TOKEN}}
             --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-            --repository.mapping *${{ github.repository.name}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            --repository.mapping *${{ env.REPO_NAME }}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
             ${{ inputs.discover_args }}
             
 
@@ -92,6 +95,6 @@ jobs:
           valint_args: --valint.bundle-branch ${{ inputs.policy_branch }}
           args: >-
             --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-            --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            --repository.mapping *${{ env.REPO_NAME }}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
             --initiative ssdf@v2
             --repo-policy-skip-aggregate
