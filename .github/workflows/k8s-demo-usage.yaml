@@ -12,8 +12,8 @@ jobs:
     name: Discover and Evaluate K8s
     uses: scribe-public/reusable-workflows/.github/workflows/k8s-demo.yaml@main
     with:
-        scribe_product_name: "Test-Product"
-        scribe_product_version: "v1.0"
+        scribe_product_name: ${{vars.PRODUCT}}
+        scribe_product_version: ${{vars.PRODUCT_VERSION}}
         targets: "scribesecurity/sky-mapper:latest, nginx:latest"
     secrets: 
         SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
