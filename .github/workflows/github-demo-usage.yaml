@@ -12,7 +12,7 @@ jobs:
     uses: scribe-public/reusable-workflows/.github/workflows/github-demo.yaml@main
     with:
         scribe_product_name: "Test-Product"
-        scribe_product_version: "Some-Version"
+        scribe_product_version: "v1.0"
         scribe_valint_url: "https://attstore.scribesecurity.com/"
     secrets: 
         SCRIBE_TOKEN: ${{ secrets.SCRIBE_TOKEN }}
