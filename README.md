@@ -90,7 +90,7 @@ jobs:
   github-discovery-demo:
     uses: 
     with:
-      scribe_valint_url: "https://api.scribesecurity.com"
+      scribe_valint_url: "https://attstore.scribesecurity.com/"
       scribe_platforms_version: "latest"
       scribe_product_version: "1.0.0"
       number_of_repos: 5
