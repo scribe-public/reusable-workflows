@@ -80,7 +80,7 @@ jobs:
           args: >-
             --token ${{ secrets.GH_TOKEN}}
             --organization.mapping *${{ github.repository_owner}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
-            --repository.mapping *${{ github.repository}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
+            --repository.mapping *${{ github.repository.name}}::${{ inputs.scribe_product_name }}::${{ inputs.scribe_product_version }}
             ${{ inputs.discover_args }}
             
 
